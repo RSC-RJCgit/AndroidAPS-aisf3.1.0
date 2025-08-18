@@ -81,6 +81,7 @@ import dagger.android.HasAndroidInjector
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.kotlin.plusAssign
 import org.json.JSONObject
+import java.time.LocalDateTime
 import java.util.Locale
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -88,6 +89,7 @@ import kotlin.math.floor
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.pow
+
 
 @Singleton
 open class OpenAPSAutoISFPlugin @Inject constructor(
@@ -313,15 +315,15 @@ open class OpenAPSAutoISFPlugin @Inject constructor(
             rate = tb?.convertedToAbsolute(now, profile) ?: 0.0,
             minutesrunning = tb?.getPassedDurationToTimeInMinutes(now)
         )
-        var minBg = hardLimits.verifyHardLimits(Round.roundTo(profile.getTargetLowMgdl(), 0.1), app.aaps.core.ui.R.string.profile_low_target, HardLimits.LIMIT_MIN_BG[0], HardLimits.LIMIT_MIN_BG[1])
-        var maxBg = hardLimits.verifyHardLimits(Round.roundTo(profile.getTargetHighMgdl(), 0.1), app.aaps.core.ui.R.string.profile_high_target, HardLimits.LIMIT_MAX_BG[0], HardLimits.LIMIT_MAX_BG[1])
-        var targetBg = hardLimits.verifyHardLimits(profile.getTargetMgdl(), app.aaps.core.ui.R.string.temp_target_value, HardLimits.LIMIT_TARGET_BG[0], HardLimits.LIMIT_TARGET_BG[1])
+        var minBg = hardLimits.verifyHardLimits(Round.roundTo(profile.getTargetLowMgdl(), 0.1), app.aaps.core.ui.R.string.profile_low_target, HardLimits.VERY_HARD_LIMIT_MIN_BG[0], HardLimits.VERY_HARD_LIMIT_MIN_BG[1])
+        var maxBg = hardLimits.verifyHardLimits(Round.roundTo(profile.getTargetHighMgdl(), 0.1), app.aaps.core.ui.R.string.profile_high_target, HardLimits.VERY_HARD_LIMIT_MAX_BG[0], HardLimits.VERY_HARD_LIMIT_MAX_BG[1])
+        var targetBg = hardLimits.verifyHardLimits(profile.getTargetMgdl(), app.aaps.core.ui.R.string.temp_target_value, HardLimits.VERY_HARD_LIMIT_TARGET_BG[0], HardLimits.VERY_HARD_LIMIT_TARGET_BG[1])
         var isTempTarget = false
         persistenceLayer.getTemporaryTargetActiveAt(dateUtil.now())?.let { tempTarget ->
             isTempTarget = true
-            minBg = hardLimits.verifyHardLimits(tempTarget.lowTarget, app.aaps.core.ui.R.string.temp_target_low_target, HardLimits.LIMIT_TEMP_MIN_BG[0], HardLimits.LIMIT_TEMP_MIN_BG[1])
-            maxBg = hardLimits.verifyHardLimits(tempTarget.highTarget, app.aaps.core.ui.R.string.temp_target_high_target, HardLimits.LIMIT_TEMP_MAX_BG[0], HardLimits.LIMIT_TEMP_MAX_BG[1])
-            targetBg = hardLimits.verifyHardLimits(tempTarget.target(), app.aaps.core.ui.R.string.temp_target_value, HardLimits.LIMIT_TEMP_TARGET_BG[0], HardLimits.LIMIT_TEMP_TARGET_BG[1])
+            minBg = hardLimits.verifyHardLimits(tempTarget.lowTarget, app.aaps.core.ui.R.string.temp_target_low_target, HardLimits.VERY_HARD_LIMIT_TEMP_MIN_BG[0], HardLimits.VERY_HARD_LIMIT_TEMP_MIN_BG[1])
+            maxBg = hardLimits.verifyHardLimits(tempTarget.highTarget, app.aaps.core.ui.R.string.temp_target_high_target, HardLimits.VERY_HARD_LIMIT_TEMP_MAX_BG[0], HardLimits.VERY_HARD_LIMIT_TEMP_MAX_BG[1])
+            targetBg = hardLimits.verifyHardLimits(tempTarget.target(), app.aaps.core.ui.R.string.temp_target_value, HardLimits.VERY_HARD_LIMIT_TEMP_TARGET_BG[0], HardLimits.VERY_HARD_LIMIT_TEMP_TARGET_BG[1])
         }
 
         var autosensResult = AutosensResult()
@@ -594,15 +596,18 @@ open class OpenAPSAutoISFPlugin @Inject constructor(
         return Math.round(value * scale) / scale
     }
 
-    fun convert_bg(value: Double): String =
-        profileUtil.fromMgdlToStringInUnits(value).replace("-0.0", "0.0")
-
+    //fun convert_bg(value: Double): String =
+    //    profileUtil.fromMgdlToStringInUnits(value).replace("-0.0", "0.0")
+    fun convert_bg(value: Double): String {
+        val resolvedDigits = if (value > 20) 1 else 2
+        return String.format("%.${resolvedDigits}f", round(value / 18, resolvedDigits))
+    }
     fun convert_bg_to_units(value: Double, profile: OapsProfileAutoIsf): Double =
         if (profile.out_units == "mmol/L") value * Constants.MGDL_TO_MMOLL else value
 
     fun activityMonitor(isTempTarget: Boolean, bg: Double, target_bg: Double, now: Int): Double
     {
-       if (preferences.get(BooleanKey.ActivityMonitorShowStepsFromSmartphone)) {
+        if (preferences.get(BooleanKey.ActivityMonitorShowStepsFromSmartphone)) {
             val nowMillis = System.currentTimeMillis()
             val stepsCount = SC(
                 duration = 0,
@@ -634,7 +639,7 @@ open class OpenAPSAutoISFPlugin @Inject constructor(
         val useSleepState = automationStateService.inState("Sleeping", "True")
         aapsLogger.debug(LTag.APS, "State json for Sleep mode: {\"Sleeping\":\"${automationStateService.getState("Sleeping")}\"}")
         // really still sleeping?
-            if (useSleepState && (recentSteps5Minutes+recentSteps10Minutes+recentSteps15Minutes < recentSteps30Minutes) && now>=inactivity_idle_end) {
+        if (useSleepState && (recentSteps5Minutes+recentSteps10Minutes+recentSteps15Minutes < recentSteps30Minutes) && now>=inactivity_idle_end) {
             automationStateService.setState("query_got_up", "query_it")
         }
         aapsLogger.debug(LTag.APS, "State json for got up query: {\"query_got_up\":\"${automationStateService.getState("query_got_up")}\"}")
@@ -651,7 +656,7 @@ open class OpenAPSAutoISFPlugin @Inject constructor(
             } else if ( useSleepState && recentSteps60Minutes <= 200) {
                 consoleLog.add("Activity monitor disabled inactivity detection: sleeping state")
             } else if ( (( inactivity_idle_start>inactivity_idle_end && ( now>=inactivity_idle_start || now<inactivity_idle_end ) )  // includes midnight
-                || ( now>=inactivity_idle_start && now<inactivity_idle_end)  )                                                       // excludes midnight
+                    || ( now>=inactivity_idle_start && now<inactivity_idle_end)  )                                                       // excludes midnight
                 && recentSteps60Minutes <= 200 && ignore_inactivity_overnight && !existSleepState) {
                 consoleLog.add("Activity monitor disabled inactivity detection: sleeping hours")
             } else if ( recentSteps5Minutes > 300 || recentSteps10Minutes > 300  || recentSteps15Minutes > 300  || recentSteps30Minutes > 1500 || recentSteps60Minutes > 2500 ) {
@@ -684,15 +689,23 @@ open class OpenAPSAutoISFPlugin @Inject constructor(
     }
 
     fun autoISF(currentTime: Long, profile: Profile): Double {
+        /*fun convert_bg(value: Double): String {
+            val resolvedDigits = if (value > 20) 1 else 2
+            return String.format("%.${resolvedDigits}f", round(value / 18, resolvedDigits))
+        }*/
+
+        val nowHour = LocalDateTime.now().hour
+        consoleError.add("steps60min is ${recentSteps60Minutes} ;;")
+        consoleError.add("nowHour is ${nowHour} ;;")
         val sens = profile.getProfileIsfMgdl()
         val glucose_status = glucoseStatusProvider.glucoseStatusData
 
         val high_temptarget_raises_sensitivity = exerciseMode || highTemptargetRaisesSensitivity
-        var target_bg = hardLimits.verifyHardLimits(profile.getTargetMgdl(), app.aaps.core.ui.R.string.temp_target_value, HardLimits.LIMIT_TARGET_BG[0], HardLimits.LIMIT_TARGET_BG[1])
+        var target_bg = hardLimits.verifyHardLimits(profile.getTargetMgdl(), app.aaps.core.ui.R.string.temp_target_value, HardLimits.VERY_HARD_LIMIT_TARGET_BG[0], HardLimits.VERY_HARD_LIMIT_TARGET_BG[1])
         var isTempTarget = false
         persistenceLayer.getTemporaryTargetActiveAt(dateUtil.now())?.let { tempTarget ->
             isTempTarget = true
-            target_bg = hardLimits.verifyHardLimits(tempTarget.target(), app.aaps.core.ui.R.string.temp_target_value, HardLimits.LIMIT_TEMP_TARGET_BG[0], HardLimits.LIMIT_TEMP_TARGET_BG[1])
+            target_bg = hardLimits.verifyHardLimits(tempTarget.target(), app.aaps.core.ui.R.string.temp_target_value, HardLimits.VERY_HARD_LIMIT_TEMP_TARGET_BG[0], HardLimits.VERY_HARD_LIMIT_TEMP_TARGET_BG[1])
         }
         val activityRatio = preferences.get(DoubleKey.ActivityMonitorRatio)
         val stepActivityDetected = preferences.get(BooleanKey.ActivityMonitorStepsActive)
@@ -771,7 +784,17 @@ open class OpenAPSAutoISFPlugin @Inject constructor(
 
         // calculate acce_ISF from bg acceleration and adapt ISF accordingly
         val fit_corr: Double = glucose_status.corrSqu
-        val bg_acce: Double = glucose_status.bgAcceleration
+        var bg_acce: Double = glucose_status.bgAcceleration
+        //val nowHour = LocalDateTime.now().hour
+        consoleError.add("steps60min is ${recentSteps60Minutes} ;;")
+        consoleError.add("nowHour is ${nowHour} ;;")
+        consoleError.add("bg_acce: ${round(bg_acce, 2)} ;")
+        consoleError.add("steps30min is ${recentSteps30Minutes} ;;")
+        consoleError.add("bgAccel_ISF_weight is ${round(bgAccel_ISF_weight,4)} ;;")
+        consoleError.add("pp_ISF_weight is ${pp_ISF_weight} ;;")//
+        consoleError.add("iobThresholdPercent is ${iobThresholdPercent} ;;")
+        consoleError.add("steps30min is ${recentSteps30Minutes} ;;")
+        //consoleError.add("bg_acce  is $bg_acce ;;")
         //consoleError.add("Parabola fit results were acceleration:${round(bg_acce, 2)}, correlation:$fit_corr, duration:${glucose_status.parabolaMinutes}m")
         if (glucose_status.a2 != 0.0 && fit_corr >= 0.9) {
             var minmax_delta: Double = -glucose_status.a1 / 2 / glucose_status.a2 * 5      // back from 5min block to 1 min
@@ -836,7 +859,7 @@ open class OpenAPSAutoISFPlugin @Inject constructor(
         val deltaType = "pp"
         when {
             bg_off > 0.0                     -> {
-                consoleError.add("${deltaType}_ISF adaptation by-passed as average glucose < $target_bg+10")
+                consoleError.add("${deltaType}_ISF adaptation by-passed as average glucose un target_bg)+10;  ${convert_bg(target_bg)+10}")
             }
 
             glucose_status.shortAvgDelta < 0 -> {
@@ -861,7 +884,7 @@ open class OpenAPSAutoISFPlugin @Inject constructor(
             }
 
             avg05 <= target_bg -> {
-                consoleError.add("dura_ISF by-passed; avg. glucose $avg05 below target $target_bg")
+                consoleError.add("dura_ISF by-passed; avg. glucose $avg05 below target ${convert_bg(target_bg)}")
             }
 
             else               -> {
@@ -1067,7 +1090,7 @@ open class OpenAPSAutoISFPlugin @Inject constructor(
                 consoleLog.add("SMB disabled because of max_iob=0")
                 return "blocked"
             } else if (useIobTh && iobThEffective < iob_data_iob) {
-                consoleLog.add("SMB disabled by Full Loop logic: iob $iob_data_iob is above effective iobTH $iobThEffective")
+                consoleLog.add("SMB disabled by Full Loop logic: iob ${round(iob_data_iob, 2)} is above effective iobTH ${round(iobThEffective, 2)}")
                 consoleLog.add("Loop power level temporarily capped")
                 return "iobTH"
             } else {
@@ -1219,7 +1242,12 @@ open class OpenAPSAutoISFPlugin @Inject constructor(
                     addPreference(AdaptiveDoublePreference(ctx = context, doubleKey = DoubleKey.ApsAutoIsfSmbMaxRangeExtension, dialogMessage = R.string.openapsama_smb_max_range_extension_summary, title = R.string.openapsama_smb_max_range_extension))
                     addPreference(AdaptiveSwitchPreference(ctx = context, booleanKey = BooleanKey.ApsAutoIsfSmbOnEvenTarget, summary = R.string.enableSMB_EvenOn_OddOff_always_summary, title = R.string.enableSMB_EvenOn_OddOff_always))
                 })
-             })
+            })
         }
     }
 }
+
+/*
+AutoISFpluginRSNp073
+
+*/

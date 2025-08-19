@@ -1486,16 +1486,23 @@ class DetermineBasalAutoISF @Inject constructor(
                 //console.error(naive_eventualBG, insulinReq, worstCaseInsulinReq, durationReq);
                 consoleError.add("naive_eventualBG ${convert_bg(naive_eventualBG)},${durationReq}m ${smbLowTempReq}U/h temp needed; last bolus ${round(lastBolusAge / 60.0, 1)}m ago; maxBolus: $maxBolus")
                 consoleError.add("offsetSoZeroSMB $offsetSoZeroSMB")
-                if (nowHour  >= 6 && nowHour <=8 && (Steps60M ?: 0) >= 12  && microBolus > 0.05 * profile.max_iob && bg < 7.5 * 18 ) {// SemiTwilight and SMB over 0.5
-                    microBolus = 0.05 * profile.max_iob
-                    rT.reason.append("nowHour ${nowHour} ")
-                    rT.reason.append("(Steps60M ?: 0) ${(Steps60M ?: 0)} ")
-                    rT.reason.append("SemiTwilight microBolus = 0.05 * profile.max_iob ${microBolus} ")
-                } else if (nowHour  >= 6 && nowHour <=8 && (Steps60M ?: 0) < 12  && microBolus > 0.03 * profile.max_iob && bg < 7.5 * 18 ) {// SemiTwilight and SMB over 0.5
-                    microBolus = 0.03 * profile.max_iob
-                    rT.reason.append("nowHour ${nowHour} ")
-                    rT.reason.append("(Steps60M ?: 0) ${(Steps60M ?: 0)} ")
-                    rT.reason.append("Twilight microBolus = 0.03 * profile.max_iob ${microBolus} ")
+                if (nowHour  >= 6 && nowHour <=8 && bg < 7.5 * 18 && Delta <0.8 * 18  && SDelta <0.6 * 18 ) {// SemiTwilight and SMB over 0.5
+                    if ( (Steps60M ?: 0) >= 12  && microBolus > 0.05 * profile.max_iob ) {// SemiTwilight and SMB over 0.5
+                        microBolus = 0.05 * profile.max_iob
+                        rT.reason.append("nowHour ${nowHour} ")
+                        rT.reason.append("(Steps60M ?: 0) ${(Steps60M ?: 0)} ")
+                        rT.reason.append("SemiTwilight microBolus = 0.05 * profile.max_iob ${microBolus} ")
+                    } else if ( (Steps60M ?: 0) < 12  && microBolus > 0.03 * profile.max_iob ) {// Twilight and SMB over 0.4
+                        microBolus = 0.03 * profile.max_iob
+                        rT.reason.append("nowHour ${nowHour} ")
+                        rT.reason.append("(Steps60M ?: 0) ${(Steps60M ?: 0)} ")
+                        rT.reason.append("Twilight microBolus = 0.03 * profile.max_iob ${microBolus} ")
+                    }
+                    if ( microBolus + IOB > 1.5 ) {// SemiTwilight and SMB over 0.5
+                        microBolus = 1.5 - IOB
+                        rT.reason.append("iobThUser ${iobThUser} IOB ${IOB} ")
+                        rT.reason.append("microBolus + IOB ov iobThUser microBolus = iobThUser - IOB ${microBolus} ")
+                    }
                 }
                 microBolus = Math.floor(microBolus * roundSMBTo) / roundSMBTo
                 if (offsetSoZeroSMB) {

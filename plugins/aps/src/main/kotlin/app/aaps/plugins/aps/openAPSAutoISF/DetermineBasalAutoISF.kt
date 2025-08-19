@@ -351,7 +351,7 @@ class DetermineBasalAutoISF @Inject constructor(
 
         if (autoIsfMode) {
             consoleError.add("----------------------------------")
-            consoleError.add("start AutoISF ${profile.autoISF_version}  RSNp074")
+            consoleError.add("start AutoISF ${profile.autoISF_version}  RSNp075")
             consoleError.add("----------------------------------")
             consoleError.addAll(auto_isf_consoleLog)
             consoleError.addAll(auto_isf_consoleError)
@@ -842,9 +842,9 @@ class DetermineBasalAutoISF @Inject constructor(
         var TwilightTimeAM =8
         var TwilightTimeMins =0
         var TwilightTimeDec = TwilightTimeAM + TwilightTimeMins /  100
-        consoleError.add("bg_acce: ${round(bg_acce, 2)} ;")
+        //consoleError.add("bg_acce: ${round(bg_acce, 2)} ;")
         rT.reason.append(
-            "RSNp074 COB: ${round(meal_data.mealCOB, 1).withoutZeros()}, Dev: ${convert_bg(deviation.toDouble())}, BGI: ${convert_bg(bgi)}, ISF: ${convert_bg(sens)}, CR: ${
+            "RSNp075 COB: ${round(meal_data.mealCOB, 1).withoutZeros()}, Dev: ${convert_bg(deviation.toDouble())}, BGI: ${convert_bg(bgi)}, ISF: ${convert_bg(sens)}, CR: ${
                 round(profile.carb_ratio, 2)
                     .withoutZeros()
             }, Target: ${convert_bg(target_bg)}, minPredBG ${convert_bg(minPredBG)}, minGuardBG ${convert_bg(minGuardBG)}, IOBpredBG ${convert_bg(lastIOBpredBG)}"
@@ -852,7 +852,36 @@ class DetermineBasalAutoISF @Inject constructor(
 
         rT.reason.append(" ================================== Delta: ${Delta }")//Delta ${minDelta.toFixed2()}
         rT.reason.append("IOB: ${round(IOB, 2)} ;")
-        rT.reason.append("iobThUseris ${iobThUser} ;;")
+        rT.reason.append("iobThUser is ${iobThUser} ;;")
+        var TOD = "Day"
+        if (iobThUser == 10 ) {
+            TOD = "Night"
+        } else if (iobThUser == 13 ) {
+            TOD = "Twilight"
+        } else if (iobThUser == 20 ) {
+            TOD = "SemiTwilight"
+        }else if (iobThUser == 30 ) {
+            TOD = "Evening"
+        } else if (iobThUser == 25 ) {
+            TOD = "PP90%"
+        } else if (iobThUser == 38 ) {
+            TOD = "Day PP100%"
+        } else if (iobThUser == 40 ) {
+            TOD = "PP105%"
+        } else if (iobThUser == 50 ) {
+            TOD = "PP110%"
+        } else if (iobThUser == 55 ) {
+            TOD = "PP130%"
+        }
+        consoleError.add("TOD: ${TOD} ;")
+        consoleError.add("bgAccel_ISF_weight is ${round(profile.bgAccel_ISF_weight,4)} ;;")
+        consoleError.add("delta_accl: "+round(delta_accl, 1).withoutZeros()+" ; ")
+        consoleError.add("bg_acce: ${round(bg_acce, 2)} ;")
+        rT.reason.append("TOD: ${TOD} ;")
+        rT.reason.append("bgAccel_ISF_weight is ${round(profile.bgAccel_ISF_weight,4)} ;;")
+        rT.reason.append("bg_acce: ${round(bg_acce, 2)} ;")
+        rT.reason.append( "delta_accl: ${round(delta_accl, 1).withoutZeros()} ;")
+
         rT.reason.append("Delta: ${convert_bg(Delta )} ;")//Delta ${minDelta.toFixed2()}
         rT.reason.append("SDelta: ${convert_bg(SDelta )} ;")
         rT.reason.append("LDelta: ${convert_bg(LDelta )} ;")
@@ -861,7 +890,7 @@ class DetermineBasalAutoISF @Inject constructor(
         consoleError.add("SDelta: "+convert_bg(SDelta )+" ; ")
         consoleError.add("LDelta: "+convert_bg(LDelta )+" ; ")
         //consoleError.add("iobThUser: "+convert_bg(iobThUser )+" ; ")
-        consoleError.add("iobThUseris ${iobThUser} ;;")
+        //consoleError.add("iobThUseris ${iobThUser} ;;")
         consoleError.add("bgAccel_ISF_weight is ${round(profile.bgAccel_ISF_weight,4)} ;;")
         consoleError.add("pp_ISF_weight is ${profile.pp_ISF_weight} ;;")//
         consoleError.add("delta_accl: "+round(delta_accl, 1).withoutZeros()+" ; ")
@@ -1611,7 +1640,7 @@ class DetermineBasalAutoISF @Inject constructor(
 
 org.gradle.jvmargs=-Xmx8192m -Dfile.encoding=UTF-8
         rT.reason.append(
-            "RSNp074 COB: ${round(meal_data.mealCOB, 1).withoutZeros()}, Dev: ${convert_bg(deviation.toDouble())}, BGI: ${convert_bg(bgi)}, ISF: ${convert_bg(sens)}, CR: ${
+            "RSNp075 COB: ${round(meal_data.mealCOB, 1).withoutZeros()}, Dev: ${convert_bg(deviation.toDouble())}, BGI: ${convert_bg(bgi)}, ISF: ${convert_bg(sens)}, CR: ${
                 round(profile.carb_ratio, 2)
                     .withoutZeros()
             }, Target: ${convert_bg(target_bg)}, minPredBG ${convert_bg(minPredBG)}, minGuardBG ${convert_bg(minGuardBG)}, IOBpredBG ${convert_bg(lastIOBpredBG)}"
@@ -1665,6 +1694,6 @@ org.gradle.jvmargs=-Xmx8192m -Dfile.encoding=UTF-8
         rT.reason.append("enableButton: ${enableButton} ;")
         rT.reason.append("targetBgOffset: ${convert_bg(targetBgOffset )} ;")
         rT.reason.append("targetBgOrig: ${convert_bg(targetBgOrig )} ;")
-RSNp074
+RSNp075
 
 */

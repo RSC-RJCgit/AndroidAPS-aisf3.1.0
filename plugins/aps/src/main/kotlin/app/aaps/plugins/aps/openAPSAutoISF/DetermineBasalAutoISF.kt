@@ -351,7 +351,7 @@ class DetermineBasalAutoISF @Inject constructor(
 
         if (autoIsfMode) {
             consoleError.add("----------------------------------")
-            consoleError.add("start AutoISF ${profile.autoISF_version}  RSNp076")
+            consoleError.add("start AutoISF ${profile.autoISF_version}  RSNp077")
             consoleError.add("----------------------------------")
             consoleError.addAll(auto_isf_consoleLog)
             consoleError.addAll(auto_isf_consoleError)
@@ -844,7 +844,7 @@ class DetermineBasalAutoISF @Inject constructor(
         var TwilightTimeDec = TwilightTimeAM + TwilightTimeMins /  100
         //consoleError.add("bg_acce: ${round(bg_acce, 2)} ;")
         rT.reason.append(
-            "RSNp076 COB: ${round(meal_data.mealCOB, 1).withoutZeros()}, Dev: ${convert_bg(deviation.toDouble())}, BGI: ${convert_bg(bgi)}, ISF: ${convert_bg(sens)}, CR: ${
+            "RSNp077 COB: ${round(meal_data.mealCOB, 1).withoutZeros()}, Dev: ${convert_bg(deviation.toDouble())}, BGI: ${convert_bg(bgi)}, ISF: ${convert_bg(sens)}, CR: ${
                 round(profile.carb_ratio, 2)
                     .withoutZeros()
             }, Target: ${convert_bg(target_bg)}, minPredBG ${convert_bg(minPredBG)}, minGuardBG ${convert_bg(minGuardBG)}, IOBpredBG ${convert_bg(lastIOBpredBG)}"
@@ -933,37 +933,10 @@ class DetermineBasalAutoISF @Inject constructor(
 
         var CarbAge = lastCarbAge
 
-        // Determine profile switch and adjustments
-        //var profileSwitch = profile.ProfileSwitch ?: 100.0
-        //val changePSW = if (profileSwitch != 92.0 && profileSwitch != 105.0) 100.0 else 100.0
-        //val crOrig = round(profile.carbRatio, 2)
-        //val crAdjusted = round(profile.carbRatio / (profileSwitch / changePSW), 2)
 
-        //val iob = iobData.iob
-
-        // Set targetBgOrig based on time of day and temp target
-        //var targetBgOrig = 98.0
-        //val varOffset: Double = 27.0
         var varOffset: Double = 27.0
         val hour = LocalDateTime.now().hour
-        /*targetBgOrig = when {
-            !profile.temptargetSet && profile.min_bg != null -> profile.min_bg
-            hour >= 22 -> 5.2 * 18
-            hour in 20 until 22 -> 5.2 * 18
-            hour in 16 until 20 -> 5.0 * 18
-            hour in 10 until 16 -> 5.0 * 18
-            hour in 8 until 10 -> 4.4 * 18
-            hour in 6 until 8 -> 5.0 * 18
-            hour in 5 until 6 -> 5.0 * 18
-            else -> 5.4 * 18
-        }
 
-
-        // Determine the offset target
-        val targetBgOffset = min(targetBgOrig + varOffset, 126.0)*/
-
-        //===============================
-        //import kotlin.math.min
 
         var targetBgOrig: Double = when {
             !profile.temptargetSet && profile.min_bg != null -> profile.min_bg!!.toDouble()
@@ -977,26 +950,6 @@ class DetermineBasalAutoISF @Inject constructor(
             else                -> 5.4 * 18
         }
 
-// make sure varOffset is Double (e.g., val varOffset: Double = ...)
-
-        var targetBgOffset = min(targetBgOrig + varOffset, 126.0)
-//+++++++++++++++++++++++++++++++++++++++++++++++++++
-
-        // Apply boost logic based on BG and COB
-        var offsetSoZeroSMB= false
-        if (bg < targetBgOffset && (COB == 0.0 || (COB < 5.0 && CarbAge > 120))) {
-            offsetSoZeroSMB= true
-            //resultTracker.reason += "bg < targetBgOffset && low COB: boostActive=($boostActive); "
-        }
-        if (!(bg < targetBgOffset && (COB == 0.0 || (COB < 5.0 && CarbAge > 120)))) {
-            offsetSoZeroSMB= false
-
-        }
-
-        //return boostActive
-
-
-        //var boostActive = false
 
         // Determine if the button should be enabled based on circadian ISF
 
@@ -1065,25 +1018,7 @@ class DetermineBasalAutoISF @Inject constructor(
             offset2 = true
             offset3 = true
         }
-
-        // Adjust offsets based on profileSwitch and delta acclimation
-        //if (profileSwitch < 100) {
-        //    offset2 = false
-        //}
-
-        /*if (nowHour >= 1 && nowHour < 6 && offset1) {
-            varOffset -= 9
-        } else if (nowHour >= 8 && nowHour < 10 && offset2) {
-            varOffset -= 9
-        }*/
-
-        //if (profileSwitch < 100 && delta_accl < 5) {
-        //    varOffset += 9
-        //} else
-
-
-        //return boostActive
-        //}
+        var targetBgOffset = min(targetBgOrig + varOffset, 126.0)
 
         var enableButton = false
         val maxIob = profile.max_iob
@@ -1097,8 +1032,7 @@ class DetermineBasalAutoISF @Inject constructor(
         val nowHour = LocalDateTime.now().hour
 
         // Initial offset and target calculations
-        //var varOffset = 27.0
-        //var targetBgOffset = min(targetBgOrig + varOffset, 126.0)
+
         if (enableButton && nowHour >=1 && nowHour <=7 && offset1 ) {
             varOffset = varOffset - 9
             rT.reason.append("offset3 ${offset1} ;")
@@ -1113,8 +1047,29 @@ class DetermineBasalAutoISF @Inject constructor(
             rT.reason.append("offset3 ${offset3} ;")
             rT.reason.append("enableButton && delta_accl un -1; varOffset = varOffset + 9 ${convert_bg(varOffset )} ;")
         }
+// make sure varOffset is Double (e.g., val varOffset: Double = ...)
 
 
+//+++++++++++++++++++++++++++++++++++++++++++++++++++
+
+        // Apply boost logic based on BG and COB
+        var offsetSoZeroSMB= false
+        if (bg < targetBgOffset && (COB == 0.0 || (COB < 5.0 && CarbAge > 120))) {
+            offsetSoZeroSMB= true
+            //resultTracker.reason += "bg < targetBgOffset && low COB: boostActive=($boostActive); "
+        }
+        if (!(bg < targetBgOffset && (COB == 0.0 || (COB < 5.0 && CarbAge > 120)))) {
+            offsetSoZeroSMB= false
+
+        }
+        rT.reason.append("offset1 ${offset1} ;")
+        rT.reason.append("offset2 ${offset2} ;")
+        rT.reason.append("offset3 ${offset3} ;")
+        rT.reason.append("varOffset ${convert_bg(varOffset )} ;")
+        consoleError.add("offset1 ${offset1} ;")
+        consoleError.add("offset2 ${offset2} ;")
+        consoleError.add("offset3 ${offset3} ;")
+        consoleError.add("varOffset ${convert_bg(varOffset )} ;")
         // Ensure varOffset does not exceed 36
         varOffset = min(36.0, varOffset ) // +9
 
@@ -1643,7 +1598,7 @@ class DetermineBasalAutoISF @Inject constructor(
 
 org.gradle.jvmargs=-Xmx8192m -Dfile.encoding=UTF-8
         rT.reason.append(
-            "RSNp076 COB: ${round(meal_data.mealCOB, 1).withoutZeros()}, Dev: ${convert_bg(deviation.toDouble())}, BGI: ${convert_bg(bgi)}, ISF: ${convert_bg(sens)}, CR: ${
+            "RSNp077 COB: ${round(meal_data.mealCOB, 1).withoutZeros()}, Dev: ${convert_bg(deviation.toDouble())}, BGI: ${convert_bg(bgi)}, ISF: ${convert_bg(sens)}, CR: ${
                 round(profile.carb_ratio, 2)
                     .withoutZeros()
             }, Target: ${convert_bg(target_bg)}, minPredBG ${convert_bg(minPredBG)}, minGuardBG ${convert_bg(minGuardBG)}, IOBpredBG ${convert_bg(lastIOBpredBG)}"
@@ -1697,6 +1652,6 @@ org.gradle.jvmargs=-Xmx8192m -Dfile.encoding=UTF-8
         rT.reason.append("enableButton: ${enableButton} ;")
         rT.reason.append("targetBgOffset: ${convert_bg(targetBgOffset )} ;")
         rT.reason.append("targetBgOrig: ${convert_bg(targetBgOrig )} ;")
-RSNp076
+RSNp077
 
 */

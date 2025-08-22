@@ -860,11 +860,11 @@ class DetermineBasalAutoISF @Inject constructor(
             TOD = "Twilight"
         } else if (iobThUser == 20 ) {
             TOD = "SemiTwilight"
-        }else if (iobThUser == 30 ) {
+        }else if (iobThUser == 25 ) {
             TOD = "Evening"
-        } else if (iobThUser == 25 ) {
+        } else if (iobThUser == 30 ) {
             TOD = "PP90%"
-        } else if (iobThUser == 38 ) {
+        } else if (iobThUser == 35 ) {
             TOD = "Day PP100%"
         } else if (iobThUser == 40 ) {
             TOD = "PP105%"
@@ -1035,11 +1035,11 @@ class DetermineBasalAutoISF @Inject constructor(
 
         if (enableButton && nowHour >=1 && nowHour <=7 && offset1 ) {
             varOffset = varOffset - 9
-            rT.reason.append("offset3 ${offset1} ;")
+            rT.reason.append("offset1 ${offset1} ;")
             rT.reason.append("enableButton && nowHour ov=1 && nowHour un=7 && offset1 :varOffset = varOffset - 9 ${convert_bg(varOffset )} ;")
         } else if (nowHour >= 8 && nowHour < 10 && offset2) {
             varOffset -= 9
-            rT.reason.append("offset3 ${offset2} ;")
+            rT.reason.append("offset2 ${offset2} ;")
             rT.reason.append("nowHour ov= 8 && nowHour un 10 && offset2:varOffset = varOffset - 9 ${convert_bg(varOffset )} ;")
         }
         if ( (enableButton && delta_accl < -10 ) || (nowHour >= 20  && offset3) ) {
@@ -1056,20 +1056,22 @@ class DetermineBasalAutoISF @Inject constructor(
         var offsetSoZeroSMB= false
         if (bg < targetBgOffset && (COB == 0.0 || (COB < 5.0 && CarbAge > 120))) {
             offsetSoZeroSMB= true
-            //resultTracker.reason += "bg < targetBgOffset && low COB: boostActive=($boostActive); "
+            rT.reason.append("bg un targetBgOffset && low COB offsetSoZeroSMB=($offsetSoZeroSMB)} ;")
         }
         if (!(bg < targetBgOffset && (COB == 0.0 || (COB < 5.0 && CarbAge > 120)))) {
             offsetSoZeroSMB= false
-
+            rT.reason.append("NOT (bg un targetBgOffset && low COB offsetSoZeroSMB=($offsetSoZeroSMB)} ;")
         }
         rT.reason.append("offset1 ${offset1} ;")
         rT.reason.append("offset2 ${offset2} ;")
         rT.reason.append("offset3 ${offset3} ;")
         rT.reason.append("varOffset ${convert_bg(varOffset )} ;")
+        rT.reason.append("varOffset ${varOffset} ;")
         consoleError.add("offset1 ${offset1} ;")
         consoleError.add("offset2 ${offset2} ;")
         consoleError.add("offset3 ${offset3} ;")
         consoleError.add("varOffset ${convert_bg(varOffset )} ;")
+        consoleError.add("varOffset ${varOffset} ;")
         // Ensure varOffset does not exceed 36
         varOffset = min(36.0, varOffset ) // +9
 
@@ -1086,6 +1088,7 @@ class DetermineBasalAutoISF @Inject constructor(
             rT.reason.append("bg un targetBgOffset && no/low COB: ")
         }
 
+        consoleError.add("target_bgOrigmm: "+convert_bg(target_bgOrigmm )+" ; ")
         consoleError.add("targetBgOrig: "+convert_bg(targetBgOrig )+" ; ")
         consoleError.add("targetBgOffset: "+convert_bg(targetBgOffset )+" ; ")
         consoleError.add("offsetSoZeroSMB: "+offsetSoZeroSMB+" ; ")
@@ -1094,6 +1097,7 @@ class DetermineBasalAutoISF @Inject constructor(
         rT.reason.append("enableButton: ${enableButton} ;")
         rT.reason.append("targetBgOffset: ${convert_bg(targetBgOffset )} ;")
         rT.reason.append("targetBgOrig: ${convert_bg(targetBgOrig )} ;")
+        rT.reason.append("target_bgOrigmm: ${convert_bg(target_bgOrigmm )} ;")
 
 
         // Reset offsetSoZeroSMBand possibly restore boostActive if conditions improve

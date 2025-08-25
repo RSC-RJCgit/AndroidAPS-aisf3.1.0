@@ -350,7 +350,7 @@ class DetermineBasalAutoISF @Inject constructor(
         consoleError.add("CR: ${profile.carb_ratio}")
 
         if (autoIsfMode) {
-            consoleError.add("----------------------------------")
+            consoleError.add("--------------- -------------------")
             consoleError.add("start AutoISF ${profile.autoISF_version}  RSNp079")
             consoleError.add("----------------------------------")
             consoleError.addAll(auto_isf_consoleLog)

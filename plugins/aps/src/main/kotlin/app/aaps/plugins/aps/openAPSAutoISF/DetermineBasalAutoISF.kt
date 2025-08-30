@@ -1477,7 +1477,8 @@ class DetermineBasalAutoISF @Inject constructor(
                 //console.error(naive_eventualBG, insulinReq, worstCaseInsulinReq, durationReq);
                 consoleError.add("naive_eventualBG ${convert_bg(naive_eventualBG)},${durationReq}m ${smbLowTempReq}U/h temp needed; last bolus ${round(lastBolusAge / 60.0, 1)}m ago; maxBolus: $maxBolus")
                 consoleError.add("offsetSoZeroSMB $offsetSoZeroSMB")
-                if ((( nowHour  >= 22 ) || ( nowHour  >= 6 && nowHour <=8 )) && bg < 7.5 * 18 && Delta <0.8 * 18  && SDelta <0.6 * 18 ) {// SemiTwilight and SMB over 0.5
+                if ((( nowHour  >= 22 ) || ( nowHour  >= 6 && nowHour <=8 )) && bg < 7.5 * 18 &&
+                    Delta <0.8 * 18  && SDelta <0.6 * 18 ) {// SemiTwilight and SMB over 0.5
                     if ( (Steps60M ?: 0) >= 12  && microBolus > 0.05 * profile.max_iob ) {// SemiTwilight and SMB over 0.5
                         microBolus = 0.05 * profile.max_iob
                         rT.reason.append("nowHour ${nowHour} ")

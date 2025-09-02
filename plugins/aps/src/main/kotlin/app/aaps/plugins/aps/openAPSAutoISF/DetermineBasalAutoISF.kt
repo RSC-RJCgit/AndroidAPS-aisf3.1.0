@@ -351,7 +351,7 @@ class DetermineBasalAutoISF @Inject constructor(
 
         if (autoIsfMode) {
             consoleError.add("--------------- -------------------")
-            consoleError.add("start AutoISF ${profile.autoISF_version}  RSNg086")
+            consoleError.add("start AutoISF ${profile.autoISF_version}  RSNg087")
             consoleError.add("----------------------------------")
             consoleError.addAll(auto_isf_consoleLog)
             consoleError.addAll(auto_isf_consoleError)
@@ -845,7 +845,7 @@ class DetermineBasalAutoISF @Inject constructor(
         var TwilightTimeDec = TwilightTimeAM + TwilightTimeMins /  100
         //consoleError.add("bg_acce: ${round(bg_acce, 2)} ;")
         rT.reason.append(
-            "RSNg086 COB: ${round(meal_data.mealCOB, 1).withoutZeros()}, Dev: ${convert_bg(deviation.toDouble())}, BGI: ${convert_bg(bgi)}, ISF: ${convert_bg(sens)}, CR: ${
+            "RSNg087 COB: ${round(meal_data.mealCOB, 1).withoutZeros()}, Dev: ${convert_bg(deviation.toDouble())}, BGI: ${convert_bg(bgi)}, ISF: ${convert_bg(sens)}, CR: ${
                 round(profile.carb_ratio, 2)
                     .withoutZeros()
             }, Target: ${convert_bg(target_bg)}, minPredBG ${convert_bg(minPredBG)}, minGuardBG ${convert_bg(minGuardBG)}, IOBpredBG ${convert_bg(lastIOBpredBG)}"
@@ -868,11 +868,11 @@ class DetermineBasalAutoISF @Inject constructor(
         } else if (iobThUser == 35 ) {
             TOD = "Day PP100%"
         } else if (iobThUser == 40 ) {
-            TOD = "PP105%"
+            TOD = "Day PP100%"
         } else if (iobThUser == 50 ) {
-            TOD = "PP110%"
+            TOD = "Day PP110%"
         } else if (iobThUser == 55 ) {
-            TOD = "PP130%"
+            TOD = "Day PP130%"
         }
         consoleError.add("TOD: ${TOD} ;")
         consoleError.add("bgAccel_ISF_weight is ${round(profile.bgAccel_ISF_weight,4)} ;;")
@@ -1613,7 +1613,7 @@ class DetermineBasalAutoISF @Inject constructor(
 
 org.gradle.jvmargs=-Xmx8192m -Dfile.encoding=UTF-8
         rT.reason.append(
-            "RSNg086 COB: ${round(meal_data.mealCOB, 1).withoutZeros()}, Dev: ${convert_bg(deviation.toDouble())}, BGI: ${convert_bg(bgi)}, ISF: ${convert_bg(sens)}, CR: ${
+            "RSNg087 COB: ${round(meal_data.mealCOB, 1).withoutZeros()}, Dev: ${convert_bg(deviation.toDouble())}, BGI: ${convert_bg(bgi)}, ISF: ${convert_bg(sens)}, CR: ${
                 round(profile.carb_ratio, 2)
                     .withoutZeros()
             }, Target: ${convert_bg(target_bg)}, minPredBG ${convert_bg(minPredBG)}, minGuardBG ${convert_bg(minGuardBG)}, IOBpredBG ${convert_bg(lastIOBpredBG)}"
@@ -1667,6 +1667,6 @@ org.gradle.jvmargs=-Xmx8192m -Dfile.encoding=UTF-8
         rT.reason.append("enableButton: ${enableButton} ;")
         rT.reason.append("targetBgOffset: ${convert_bg(targetBgOffset )} ;")
         rT.reason.append("targetBgOrig: ${convert_bg(targetBgOrig )} ;")
-RSNg086
+RSNg087
 
 */

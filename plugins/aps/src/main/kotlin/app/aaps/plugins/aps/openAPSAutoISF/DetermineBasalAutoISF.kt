@@ -351,7 +351,7 @@ class DetermineBasalAutoISF @Inject constructor(
 
         if (autoIsfMode) {
             consoleError.add("--------------- -------------------")
-            consoleError.add("start AutoISF ${profile.autoISF_version}  RSNg087")
+            consoleError.add("start AutoISF ${profile.autoISF_version} rsnG088")
             consoleError.add("----------------------------------")
             consoleError.addAll(auto_isf_consoleLog)
             consoleError.addAll(auto_isf_consoleError)
@@ -861,7 +861,7 @@ class DetermineBasalAutoISF @Inject constructor(
             TOD = "Twilight"
         } else if (iobThUser == 20 ) {
             TOD = "SemiTwilight"
-        }else if (iobThUser == 25 ) {
+        }else if (iobThUser == 15 ) {
             TOD = "Evening"
         } else if (iobThUser == 30 ) {
             TOD = "PP90%"

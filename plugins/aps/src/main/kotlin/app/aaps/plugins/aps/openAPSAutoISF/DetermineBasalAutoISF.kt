@@ -351,7 +351,7 @@ class DetermineBasalAutoISF @Inject constructor(
 
         if (autoIsfMode) {
             consoleError.add("--------------- -------------------")
-            consoleError.add("start AutoISF ${profile.autoISF_version}rsnL089")
+            consoleError.add("start AutoISF ${profile.autoISF_version}G6rsn089")
             consoleError.add("----------------------------------")
             consoleError.addAll(auto_isf_consoleLog)
             consoleError.addAll(auto_isf_consoleError)
@@ -854,7 +854,7 @@ class DetermineBasalAutoISF @Inject constructor(
         rT.reason.append(" ================================== Delta: ${Delta }")//Delta ${minDelta.toFixed2()}
         rT.reason.append("IOB: ${round(IOB, 2)} ;")
         rT.reason.append("iobThUser is ${iobThUser} ;;")
-        var TOD = "Day"
+        var TOD = "Evening"
         if (iobThUser == 10 ) {
             TOD = "Night"
         } else if (iobThUser == 13 ) {
@@ -865,13 +865,13 @@ class DetermineBasalAutoISF @Inject constructor(
             TOD = "Evening"
         } else if (iobThUser == 30 ) {
             TOD = "PP90%"
-        } else if (iobThUser == 35 ) {
+        } else if (iobThUser == 50 ) {
             TOD = "Day PP100%"
         } else if (iobThUser == 40 ) {
             TOD = "Day PP100%"
-        } else if (iobThUser == 50 ) {
-            TOD = "Day PP110%"
         } else if (iobThUser == 55 ) {
+            TOD = "Day PP110%"
+        } else if (iobThUser == 60 ) {
             TOD = "Day PP130%"
         }
         consoleError.add("TOD: ${TOD} ;")
@@ -935,7 +935,8 @@ class DetermineBasalAutoISF @Inject constructor(
         var CarbAge = lastCarbAge
 
 
-        var varOffset: Double = 27.0
+        //var varOffset: Double = 27.0
+        var varOffset: Double = 9.0
         val hour = LocalDateTime.now().hour
 
 
@@ -995,6 +996,12 @@ class DetermineBasalAutoISF @Inject constructor(
         if (carbsSugg == 1) {
             carbsSugg = 5
             offset1 = true
+        } else if (carbsSugg == 9) {
+            carbsSugg = 5
+            varOffset += 9
+        } else if (carbsSugg == 10) {
+            carbsSugg = 5
+            varOffset += 18
         } else if (carbsSugg == 2) {
             carbsSugg = 5
             offset2 = true
@@ -1485,8 +1492,8 @@ class DetermineBasalAutoISF @Inject constructor(
                 //console.error(naive_eventualBG, insulinReq, worstCaseInsulinReq, durationReq);
                 consoleError.add("naive_eventualBG ${convert_bg(naive_eventualBG)},${durationReq}m ${smbLowTempReq}U/h temp needed; last bolus ${round(lastBolusAge / 60.0, 1)}m ago; maxBolus: $maxBolus")
                 consoleError.add("offsetSoZeroSMB $offsetSoZeroSMB")
-                //var LibreTrue = 1.00
-                var LibreTrue = 0.33
+                var LibreTrue = 1.00
+                //var LibreTrue = 0.33
                 if ((( nowHour  >= 22 ) || ( nowHour <=8 )) && bg < 7.5 * 18 &&
                     Delta <1.0 * 18  && SDelta <1.0* 18 && COB <= 0) {// SemiTwilight and SMB over 0.5
                     if ( (Steps60M ?: 0) >= 12  && microBolus > LibreTrue * 0.05 * profile.max_iob ) {// SemiTwilight and SMB over 0.5

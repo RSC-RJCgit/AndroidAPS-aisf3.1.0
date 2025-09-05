@@ -1248,6 +1248,6 @@ open class OpenAPSAutoISFPlugin @Inject constructor(
 }
 
 /*
-AutoISFpluginL2rsn090
+AutoISFpluginLGrsn091
 
 */

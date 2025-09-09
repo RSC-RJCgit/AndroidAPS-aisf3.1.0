@@ -787,7 +787,9 @@ open class OpenAPSAutoISFPlugin @Inject constructor(
         var bg_acce: Double = glucose_status.bgAcceleration
         //val nowHour = LocalDateTime.now().hour
         consoleError.add("steps60min is ${recentSteps60Minutes} ;;")
+        //consoleError.add("steps180min is ${steps180min} ;;")
         consoleError.add("nowHour is ${nowHour} ;;")
+        //consoleError.add("nowDate is ${nowDate} ;;")
         consoleError.add("bg_acce: ${round(bg_acce, 2)} ;")
         consoleError.add("steps30min is ${recentSteps30Minutes} ;;")
         consoleError.add("bgAccel_ISF_weight is ${round(bgAccel_ISF_weight,4)} ;;")
@@ -1248,6 +1250,6 @@ open class OpenAPSAutoISFPlugin @Inject constructor(
 }
 
 /*
-AutoISFpluginNrsn093
+AutoISFpluginNrsn094
 
 */

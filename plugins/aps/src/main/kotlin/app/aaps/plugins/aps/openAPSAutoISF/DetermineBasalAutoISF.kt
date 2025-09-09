@@ -351,7 +351,7 @@ class DetermineBasalAutoISF @Inject constructor(
 
         if (autoIsfMode) {
             consoleError.add("--------------- -------------------")
-            consoleError.add("start AutoISF ${profile.autoISF_version}Nrsn093")
+            consoleError.add("start AutoISF ${profile.autoISF_version}Nrsn094")
             consoleError.add("----------------------------------")
             consoleError.addAll(auto_isf_consoleLog)
             consoleError.addAll(auto_isf_consoleError)
@@ -845,7 +845,7 @@ class DetermineBasalAutoISF @Inject constructor(
         var TwilightTimeDec = TwilightTimeAM + TwilightTimeMins /  100
         //consoleError.add("bg_acce: ${round(bg_acce, 2)} ;")
         rT.reason.append(
-            "Nrsn093 COB: ${round(meal_data.mealCOB, 1).withoutZeros()}, Dev: ${convert_bg(deviation.toDouble())}, BGI: ${convert_bg(bgi)}, ISF: ${convert_bg(sens)}, CR: ${
+            "Nrsn094 COB: ${round(meal_data.mealCOB, 1).withoutZeros()}, Dev: ${convert_bg(deviation.toDouble())}, BGI: ${convert_bg(bgi)}, ISF: ${convert_bg(sens)}, CR: ${
                 round(profile.carb_ratio, 2)
                     .withoutZeros()
             }, Target: ${convert_bg(target_bg)}, minPredBG ${convert_bg(minPredBG)}, minGuardBG ${convert_bg(minGuardBG)}, IOBpredBG ${convert_bg(lastIOBpredBG)}"
@@ -889,7 +889,7 @@ class DetermineBasalAutoISF @Inject constructor(
         consoleError.add("IOB: "+round(IOB, 2)+" ; ")
         consoleError.add("Delta: "+convert_bg(Delta )+" ; ")
         consoleError.add("SDelta: "+convert_bg(SDelta )+" ; ")
-        consoleError.add("LDelta: "+target_bgOrigmm+" ; ")
+        consoleError.add("LDelta: "+convert_bg(LDelta )+" ; ")
         //consoleError.add("iobThUser: "+convert_bg(iobThUser )+" ; ")
         //consoleError.add("iobThUseris ${iobThUser} ;;")
         consoleError.add("bgAccel_ISF_weight is ${round(profile.bgAccel_ISF_weight,4)} ;;")
@@ -982,6 +982,7 @@ class DetermineBasalAutoISF @Inject constructor(
 
         var highProfile = false
         var carbsSugg = profile.carbsReqThreshold
+        var carbsSuggOrig = carbsSugg
         var boostOrig = false
 
         // Determine profileSwitch and adjust carbs suggestion and offsets
@@ -1046,7 +1047,7 @@ class DetermineBasalAutoISF @Inject constructor(
             rT.reason.append("offset1 ${offset1} ;")
             rT.reason.append("enableButton && nowHour ov=1 && nowHour un=7 && offset1 :varOffset = varOffset - 9 ${convert_bg(varOffset )} ;")
         } else if (nowHour >= 8 && nowHour < 10 && offset2) {
-            varOffset -= 9
+            varOffset = varOffset - 9
             rT.reason.append("offset2 ${offset2} ;")
             rT.reason.append("nowHour ov= 8 && nowHour un 10 && offset2:varOffset = varOffset - 9 ${convert_bg(varOffset )} ;")
         }
@@ -1096,11 +1097,13 @@ class DetermineBasalAutoISF @Inject constructor(
             rT.reason.append("bg un targetBgOffset && no/low COB: ")
         }
 
+        consoleError.add("target_bgOrigmmcarbsSuggOrig: "+carbsSuggOrig+" ; ")
         consoleError.add("target_bgOrigmm: "+target_bgOrigmm+" ; ")
         consoleError.add("targetBgOrig: "+convert_bg(targetBgOrig )+" ; ")
         consoleError.add("targetBgOffset: "+convert_bg(targetBgOffset )+" ; ")
         consoleError.add("offsetSoZeroSMB: "+offsetSoZeroSMB+" ; ")
         consoleError.add("enableButton: "+enableButton+" ; ")
+        rT.reason.append("carbsSuggOrig: "+carbsSuggOrig+" ; ")
         rT.reason.append("offsetSoZeroSMB: ${offsetSoZeroSMB} ;")
         rT.reason.append("enableButton: ${enableButton} ;")
         rT.reason.append("targetBgOffset: ${convert_bg(targetBgOffset )} ;")
@@ -1628,7 +1631,7 @@ class DetermineBasalAutoISF @Inject constructor(
 
 org.gradle.jvmargs=-Xmx8192m -Dfile.encoding=UTF-8
         rT.reason.append(
-            "Nrsn093 COB: ${round(meal_data.mealCOB, 1).withoutZeros()}, Dev: ${convert_bg(deviation.toDouble())}, BGI: ${convert_bg(bgi)}, ISF: ${convert_bg(sens)}, CR: ${
+            "Nrsn094 COB: ${round(meal_data.mealCOB, 1).withoutZeros()}, Dev: ${convert_bg(deviation.toDouble())}, BGI: ${convert_bg(bgi)}, ISF: ${convert_bg(sens)}, CR: ${
                 round(profile.carb_ratio, 2)
                     .withoutZeros()
             }, Target: ${convert_bg(target_bg)}, minPredBG ${convert_bg(minPredBG)}, minGuardBG ${convert_bg(minGuardBG)}, IOBpredBG ${convert_bg(lastIOBpredBG)}"
@@ -1682,6 +1685,6 @@ org.gradle.jvmargs=-Xmx8192m -Dfile.encoding=UTF-8
         rT.reason.append("enableButton: ${enableButton} ;")
         rT.reason.append("targetBgOffset: ${convert_bg(targetBgOffset )} ;")
         rT.reason.append("targetBgOrig: ${convert_bg(targetBgOrig )} ;")
-Nrsn093
+Nrsn094
 
 */

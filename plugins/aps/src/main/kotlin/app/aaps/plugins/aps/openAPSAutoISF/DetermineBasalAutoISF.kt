@@ -1527,7 +1527,7 @@ class DetermineBasalAutoISF @Inject constructor(
                 if ( bg > 7.0 * 18 && lastBolusAge > 2 * SMBInterval - 6.0) {
                     //microBolus = microBolus * 1.5
                     rT.reason.append(" lastBolusAge ov 2 * SMBInterval ${SMBInterval} secs; Consider microBolus = microBolus * 1.5 ${1.5 * microBolus}")
-                    rT.reason.append(" bg ${convert_bg(bg)}  ; lastBolusAge  ${lastBolusAge} secs")
+                    rT.reason.append("  bg ${convert_bg(bg)}  ; lastBolusAge  ${lastBolusAge} secs")
                 }else if (bg > 7.0 * 18 && lastBolusAge > 3 * SMBInterval - 6.0) {
                     //microBolus = microBolus * 2
                     rT.reason.append(" lastBolusAge ov 3 * SMBInterval ${SMBInterval} secs; Consider microBolus = microBolus * 2 ${2 * microBolus}")

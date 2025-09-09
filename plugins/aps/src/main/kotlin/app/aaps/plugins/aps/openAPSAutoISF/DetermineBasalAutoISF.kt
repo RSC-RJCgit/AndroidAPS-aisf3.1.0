@@ -351,7 +351,7 @@ class DetermineBasalAutoISF @Inject constructor(
 
         if (autoIsfMode) {
             consoleError.add("--------------- -------------------")
-            consoleError.add("start AutoISF ${profile.autoISF_version}Nrsn094")
+            consoleError.add("start AutoISF ${profile.autoISF_version}Nrsn095")
             consoleError.add("----------------------------------")
             consoleError.addAll(auto_isf_consoleLog)
             consoleError.addAll(auto_isf_consoleError)
@@ -845,7 +845,7 @@ class DetermineBasalAutoISF @Inject constructor(
         var TwilightTimeDec = TwilightTimeAM + TwilightTimeMins /  100
         //consoleError.add("bg_acce: ${round(bg_acce, 2)} ;")
         rT.reason.append(
-            "Nrsn094 COB: ${round(meal_data.mealCOB, 1).withoutZeros()}, Dev: ${convert_bg(deviation.toDouble())}, BGI: ${convert_bg(bgi)}, ISF: ${convert_bg(sens)}, CR: ${
+            "Nrsn095 COB: ${round(meal_data.mealCOB, 1).withoutZeros()}, Dev: ${convert_bg(deviation.toDouble())}, BGI: ${convert_bg(bgi)}, ISF: ${convert_bg(sens)}, CR: ${
                 round(profile.carb_ratio, 2)
                     .withoutZeros()
             }, Target: ${convert_bg(target_bg)}, minPredBG ${convert_bg(minPredBG)}, minGuardBG ${convert_bg(minGuardBG)}, IOBpredBG ${convert_bg(lastIOBpredBG)}"
@@ -1524,6 +1524,19 @@ class DetermineBasalAutoISF @Inject constructor(
                     rT.reason.append(" CHANGED SIZE SMB? ")
 
                 }
+                if ( bg > 7.0 * 18 && lastBolusAge > 2 * SMBInterval - 6.0) {
+                    //microBolus = microBolus * 1.5
+                    rT.reason.append(" lastBolusAge ov 2 * SMBInterval ${SMBInterval} secs; Consider microBolus = microBolus * 1.5 ${1.5 * microBolus}")
+                    rT.reason.append(" bg ${convert_bg(bg)}  ; lastBolusAge  ${lastBolusAge} secs")
+                }else if (bg > 7.0 * 18 && lastBolusAge > 3 * SMBInterval - 6.0) {
+                    //microBolus = microBolus * 2
+                    rT.reason.append(" lastBolusAge ov 3 * SMBInterval ${SMBInterval} secs; Consider microBolus = microBolus * 2 ${2 * microBolus}")
+                    rT.reason.append(" bg ${convert_bg(bg)}   ; lastBolusAge  ${lastBolusAge} secs")
+                }else {
+                    //microBolus = microBolus
+                    rT.reason.append(" lastBolusAge un 2 * SMBInterval ${SMBInterval} secs;  microBolus * 1.0 ${ microBolus}")
+                    rT.reason.append(" bg ${convert_bg(bg)}  ; lastBolusAge  ${lastBolusAge} secs")
+                }
                 microBolus = Math.floor(microBolus * roundSMBTo) / roundSMBTo
                 if (offsetSoZeroSMB) {
                     // offsetSoZeroSMBalready defined by tod, bgl, target
@@ -1631,7 +1644,7 @@ class DetermineBasalAutoISF @Inject constructor(
 
 org.gradle.jvmargs=-Xmx8192m -Dfile.encoding=UTF-8
         rT.reason.append(
-            "Nrsn094 COB: ${round(meal_data.mealCOB, 1).withoutZeros()}, Dev: ${convert_bg(deviation.toDouble())}, BGI: ${convert_bg(bgi)}, ISF: ${convert_bg(sens)}, CR: ${
+            "Nrsn095 COB: ${round(meal_data.mealCOB, 1).withoutZeros()}, Dev: ${convert_bg(deviation.toDouble())}, BGI: ${convert_bg(bgi)}, ISF: ${convert_bg(sens)}, CR: ${
                 round(profile.carb_ratio, 2)
                     .withoutZeros()
             }, Target: ${convert_bg(target_bg)}, minPredBG ${convert_bg(minPredBG)}, minGuardBG ${convert_bg(minGuardBG)}, IOBpredBG ${convert_bg(lastIOBpredBG)}"
@@ -1685,6 +1698,6 @@ org.gradle.jvmargs=-Xmx8192m -Dfile.encoding=UTF-8
         rT.reason.append("enableButton: ${enableButton} ;")
         rT.reason.append("targetBgOffset: ${convert_bg(targetBgOffset )} ;")
         rT.reason.append("targetBgOrig: ${convert_bg(targetBgOrig )} ;")
-Nrsn094
+Nrsn095
 
 */

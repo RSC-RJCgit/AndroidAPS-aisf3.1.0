@@ -1524,11 +1524,11 @@ class DetermineBasalAutoISF @Inject constructor(
                     rT.reason.append(" CHANGED SIZE SMB? ")
 
                 }
-                if ( SMBInterval == 1.0 && bg > 7.0 * 18 && lastBolusAge > 2 * SMBInterval - 6.0) {
+                if ( SMBInterval == 1.0 && bg > 7.0 * 18  && LDelta > 0.1 * 18 && lastBolusAge > 2 * SMBInterval - 6.0) {
                     //microBolus = microBolus * 1.5
                     rT.reason.append(" lastBolusAge ov 2 * SMBInterval ${SMBInterval} secs; Consider microBolus = microBolus * 1.5 ${1.5 * microBolus}")
                     rT.reason.append("  bg ${convert_bg(bg)}  ; lastBolusAge  ${lastBolusAge} secs")
-                }else if ( SMBInterval == 1.0 && bg > 7.0 * 18 && lastBolusAge > 3 * SMBInterval - 6.0) {
+                }else if ( SMBInterval == 1.0 && bg > 7.0 * 18 && LDelta > 0.1 * 18 && lastBolusAge > 3 * SMBInterval - 6.0) {
                     //microBolus = microBolus * 2
                     rT.reason.append(" lastBolusAge ov 3 * SMBInterval ${SMBInterval} secs; Consider microBolus = microBolus * 2 ${2 * microBolus}")
                     rT.reason.append(" bg ${convert_bg(bg)}   ; lastBolusAge  ${lastBolusAge} secs")

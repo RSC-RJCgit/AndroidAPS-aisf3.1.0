@@ -829,11 +829,11 @@ class DetermineBasalAutoISF @Inject constructor(
         rT.IOB = iob_data.iob
 
         //==========================================================================================================
-        var Delta = glucose_status.delta
-        var IOB = iob_data.iob
-        var COB = meal_data.mealCOB
-        var SDelta = glucose_status.shortAvgDelta
-        var LDelta = glucose_status.longAvgDelta
+        val Delta = glucose_status.delta
+        val IOB = iob_data.iob
+        val COB = meal_data.mealCOB
+        val SDelta = glucose_status.shortAvgDelta
+        val LDelta = glucose_status.longAvgDelta
         val Steps5M = profile.recent_steps_5_minutes
         val Steps10M = profile.recent_steps_10_minutes
         val Steps15M = profile.recent_steps_15_minutes
@@ -851,11 +851,11 @@ class DetermineBasalAutoISF @Inject constructor(
         var CR = round ( profile.carb_ratio , 2 )
 
 
-        var bg_acce: Double = glucose_status.bgAcceleration
+        val bg_acce: Double = glucose_status.bgAcceleration
         //var iobThUser = profile.iob_threshold_percent
-        var TwilightTimeAM =8
-        var TwilightTimeMins =0
-        var TwilightTimeDec = TwilightTimeAM + TwilightTimeMins /  100
+        val TwilightTimeAM =8
+        val TwilightTimeMins =0
+        val TwilightTimeDec = TwilightTimeAM + TwilightTimeMins /  100
         //consoleError.add("bg_acce: ${round(bg_acce, 2)} ;")
         rT.reason.append(
             "Nrsn098 COB: ${round(meal_data.mealCOB, 1).withoutZeros()}, Dev: ${convert_bg(deviation.toDouble())}, BGI: ${convert_bg(bgi)}, ISF: ${convert_bg(sens)}, CR: ${

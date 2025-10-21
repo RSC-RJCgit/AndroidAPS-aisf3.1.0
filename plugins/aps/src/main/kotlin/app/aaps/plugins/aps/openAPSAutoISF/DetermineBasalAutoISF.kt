@@ -247,7 +247,7 @@ class DetermineBasalAutoISF @Inject constructor(
 
         // TODO eliminate
         var max_iob = profile.max_iob // maximum amount of non-bolus IOB OpenAPS will ever deliver
-        var iobThUser = profile.iob_threshold_percent
+        val iobThUser = profile.iob_threshold_percent
         if ( iobThUser == 95 ) {
             max_iob = max_iob * 1.2
         }

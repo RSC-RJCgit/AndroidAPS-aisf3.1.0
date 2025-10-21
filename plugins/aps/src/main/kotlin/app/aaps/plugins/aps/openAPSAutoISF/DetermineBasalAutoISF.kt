@@ -852,7 +852,7 @@ class DetermineBasalAutoISF @Inject constructor(
 
 
         var bg_acce: Double = glucose_status.bgAcceleration
-        var iobThUser = profile.iob_threshold_percent
+        //var iobThUser = profile.iob_threshold_percent
         var TwilightTimeAM =8
         var TwilightTimeMins =0
         var TwilightTimeDec = TwilightTimeAM + TwilightTimeMins /  100

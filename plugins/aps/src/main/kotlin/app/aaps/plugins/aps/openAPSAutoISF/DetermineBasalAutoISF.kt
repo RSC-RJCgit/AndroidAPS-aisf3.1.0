@@ -246,15 +246,15 @@ class DetermineBasalAutoISF @Inject constructor(
         }
 
         // TODO eliminate
-        val max_iob = profile.max_iob // maximum amount of non-bolus IOB OpenAPS will ever deliver
+        var max_iob = profile.max_iob // maximum amount of non-bolus IOB OpenAPS will ever deliver
         var iobThUser = profile.iob_threshold_percent
-        if ( iobThUser = 95 ) {
+        if ( iobThUser == 95 ) {
             max_iob = max_iob * 1.2
         }
-        else if ( iobThUser = 96 ) {
+        else if ( iobThUser == 96 ) {
             max_iob = max_iob * 1.5
         }
-        else if ( iobThUser = 97 ) {
+        else if ( iobThUser == 97 ) {
             max_iob = max_iob * 2.0
         }
 
@@ -299,7 +299,7 @@ class DetermineBasalAutoISF @Inject constructor(
             sensitivityRatio = autosens_data.ratio
             consoleError.add("Autosens ratio: $sensitivityRatio; ")
         }
-        var iobThUser = profile.iob_threshold_percent
+        //var iobThUser = profile.iob_threshold_percent
         var iobTH_reduction_ratio = 1.0
         if (iob_threshold_percent != 100) {
             iobTH_reduction_ratio = profile_percentage / 100.0 * sensitivityRatio   //exercise_ratio * activityRatio

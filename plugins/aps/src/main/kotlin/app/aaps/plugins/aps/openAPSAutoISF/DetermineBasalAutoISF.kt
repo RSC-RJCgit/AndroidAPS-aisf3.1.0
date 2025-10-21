@@ -247,6 +247,16 @@ class DetermineBasalAutoISF @Inject constructor(
 
         // TODO eliminate
         val max_iob = profile.max_iob // maximum amount of non-bolus IOB OpenAPS will ever deliver
+        var iobThUser = profile.iob_threshold_percent
+        if ( iobThUser = 95 ) {
+            max_iob = max_iob * 1.2
+        }
+        else if ( iobThUser = 96 ) {
+            max_iob = max_iob * 1.5
+        }
+        else if ( iobThUser = 97 ) {
+            max_iob = max_iob * 2.0
+        }
 
         // if min and max are set, then set target to their average
         var target_bg = (profile.min_bg + profile.max_bg) / 2.0
@@ -289,6 +299,7 @@ class DetermineBasalAutoISF @Inject constructor(
             sensitivityRatio = autosens_data.ratio
             consoleError.add("Autosens ratio: $sensitivityRatio; ")
         }
+        var iobThUser = profile.iob_threshold_percent
         var iobTH_reduction_ratio = 1.0
         if (iob_threshold_percent != 100) {
             iobTH_reduction_ratio = profile_percentage / 100.0 * sensitivityRatio   //exercise_ratio * activityRatio
@@ -351,14 +362,16 @@ class DetermineBasalAutoISF @Inject constructor(
 
         if (autoIsfMode) {
             consoleError.add("--------------- -------------------")
-            consoleError.add("start AutoISF ${profile.autoISF_version}Nrsn097")
+            consoleError.add("start AutoISF ${profile.autoISF_version}Nrsn098")
             consoleError.add("----------------------------------")
             consoleError.addAll(auto_isf_consoleLog)
             consoleError.addAll(auto_isf_consoleError)
         }
         // mod autoISF3.0-dev: if that would put us over iobTH, then reduce accordingly; allow 30% overrun
         val iobTHtolerance = 130.0
-        val iobTHvirtual = iob_threshold_percent * iobTHtolerance / 10000.0 * profile.max_iob * iobTH_reduction_ratio
+        //val iobTHvirtual = iob_threshold_percent * iobTHtolerance / 10000.0 * profile.max_iob * iobTH_reduction_ratio
+        val iobTHvirtualHARD = iob_threshold_percent * 100.0 / 10000.0 * max_iob * iobTH_reduction_ratio
+        val iobTHvirtual = iob_threshold_percent * iobTHtolerance / 10000.0 * max_iob * iobTH_reduction_ratio
         var enableSMB = false
         if (microBolusAllowed && loop_wanted_smb != "AAPS") {
             if (loop_wanted_smb == "enforced" || loop_wanted_smb == "fullLoop") {              // otherwise FL switched SMB off
@@ -845,7 +858,7 @@ class DetermineBasalAutoISF @Inject constructor(
         var TwilightTimeDec = TwilightTimeAM + TwilightTimeMins /  100
         //consoleError.add("bg_acce: ${round(bg_acce, 2)} ;")
         rT.reason.append(
-            "Nrsn097 COB: ${round(meal_data.mealCOB, 1).withoutZeros()}, Dev: ${convert_bg(deviation.toDouble())}, BGI: ${convert_bg(bgi)}, ISF: ${convert_bg(sens)}, CR: ${
+            "Nrsn098 COB: ${round(meal_data.mealCOB, 1).withoutZeros()}, Dev: ${convert_bg(deviation.toDouble())}, BGI: ${convert_bg(bgi)}, ISF: ${convert_bg(sens)}, CR: ${
                 round(profile.carb_ratio, 2)
                     .withoutZeros()
             }, Target: ${convert_bg(target_bg)}, minPredBG ${convert_bg(minPredBG)}, minGuardBG ${convert_bg(minGuardBG)}, IOBpredBG ${convert_bg(lastIOBpredBG)}"
@@ -854,7 +867,7 @@ class DetermineBasalAutoISF @Inject constructor(
         rT.reason.append(" ================================== Delta: ${Delta }")//Delta ${minDelta.toFixed2()}
         rT.reason.append("IOB: ${round(IOB, 2)} ;")
         rT.reason.append("iobThUser is ${iobThUser} ;;")
-        var TOD = "Evening"
+        var TOD = "not set TOD"
         if (iobThUser == 10 ) {
             TOD = "Night"
         } else if (iobThUser == 13 ) {
@@ -1030,7 +1043,7 @@ class DetermineBasalAutoISF @Inject constructor(
         var targetBgOffset = min(targetBgOrig + varOffset, 126.0)
 
         var enableButton = false
-        val maxIob = profile.max_iob
+        //val maxIob = profile.max_iob
         //if (profile.enableCircadianISF) {
         //    enableButton = true
         //}
@@ -1444,14 +1457,14 @@ class DetermineBasalAutoISF @Inject constructor(
                     microBolus = Math.floor(microBolus * roundSMBTo) / roundSMBTo
                 }
                 //microBolus = Math.max(microBolus , maxBolus)
-                if ( microBolus + IOB > iobTHvirtual) {// SemiTwilight and SMB over 0.5
-                    microBolus = iobTHvirtual - IOB
-                    rT.reason.append("iobTHvirtual ${iobTHvirtual} IOB ${IOB} ")
-                    rT.reason.append("microBolus + IOB ov iobTHvirtual microBolus = iobTHvirtual - IOB ${microBolus} ")
+                if ( microBolus + IOB > iobTHvirtualHARD) {// SemiTwilight and SMB over 0.5
+                    microBolus = iobTHvirtualHARD - IOB
+                    rT.reason.append("iobTHvirtualHARD ${iobTHvirtualHARD} IOB ${IOB} ")
+                    rT.reason.append("microBolus + IOB ov iobTHvirtualHARD microBolus = iobTHvirtualHARD - IOB ${microBolus} ")
                 }
 
-                consoleError.add("Full loop capped SMB at ${round(microBolus, 2)} to not exceed $iobTHtolerance% of effective iobTH ${round(iobTHvirtual / iobTHtolerance * 100, 2)}U")
-                rT.reason.append("Full loop capped SMB at ${round(microBolus, 2)} to not exceed $iobTHtolerance% of effective iobTH ${round(iobTHvirtual / iobTHtolerance * 100, 2)}U")
+                consoleError.add("Full loop capped SMB at ${round(microBolus, 2)} to not exceed $iobTHtolerance% of effective iobTHvirtualHARD ${round(iobTHvirtualHARD / iobTHtolerance * 100, 2)}U")
+                rT.reason.append("Full loop capped SMB at ${round(microBolus, 2)} to not exceed $iobTHtolerance% of effective iobTHvirtualHARD ${round(iobTHvirtualHARD / iobTHtolerance * 100, 2)}U")
 
 
                 // calculate a long enough zero temp to eventually correct back up to target
@@ -1501,9 +1514,9 @@ class DetermineBasalAutoISF @Inject constructor(
                     microBolus = 0.0
                     //rT.reason.append("nowHour ${nowHour} ")
                     //rT.reason.append("(Steps60M ?: 0) ${(Steps60M ?: 0)} ")
-                    //rT.reason.append("SemiTwilight microBolus =  LibreTrue * 0.05 * profile.max_iob ${microBolus} ")
+                    //rT.reason.append("SemiTwilight microBolus =  LibreTrue * 0.05 * max_iob ${microBolus} ")
                 }
-                if ((( nowHour  >= 22 ) || ( nowHour <=8 )) && bg < 7.5 * 18 &&
+                if ((( nowHour  >= 22 ) || ( nowHour <=8 )) && bg < 7.0 * 18 &&
                     Delta <1.0 * 18  && SDelta <1.0* 18 && COB <= 0) {// SemiTwilight and SMB over 0.5
                     if ( (Steps60M ?: 0) >= 12  && microBolus > LibreTrue * 0.05 * profile.max_iob ) {// SemiTwilight and SMB over 0.5
                         microBolus = LibreTrue * 0.05 * profile.max_iob
@@ -1646,7 +1659,7 @@ class DetermineBasalAutoISF @Inject constructor(
 
 org.gradle.jvmargs=-Xmx8192m -Dfile.encoding=UTF-8
         rT.reason.append(
-            "Nrsn097 COB: ${round(meal_data.mealCOB, 1).withoutZeros()}, Dev: ${convert_bg(deviation.toDouble())}, BGI: ${convert_bg(bgi)}, ISF: ${convert_bg(sens)}, CR: ${
+            "Nrsn098 COB: ${round(meal_data.mealCOB, 1).withoutZeros()}, Dev: ${convert_bg(deviation.toDouble())}, BGI: ${convert_bg(bgi)}, ISF: ${convert_bg(sens)}, CR: ${
                 round(profile.carb_ratio, 2)
                     .withoutZeros()
             }, Target: ${convert_bg(target_bg)}, minPredBG ${convert_bg(minPredBG)}, minGuardBG ${convert_bg(minGuardBG)}, IOBpredBG ${convert_bg(lastIOBpredBG)}"
@@ -1700,6 +1713,6 @@ org.gradle.jvmargs=-Xmx8192m -Dfile.encoding=UTF-8
         rT.reason.append("enableButton: ${enableButton} ;")
         rT.reason.append("targetBgOffset: ${convert_bg(targetBgOffset )} ;")
         rT.reason.append("targetBgOrig: ${convert_bg(targetBgOrig )} ;")
-Nrsn097
+Nrsn098
 
 */

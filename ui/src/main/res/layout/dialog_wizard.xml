@@ -465,7 +465,7 @@
                         style="@style/Widget.App.CheckBox"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:checked="false"
+                        android:checked="true"
                         android:clickable="true"
                         android:text="@string/iob" />
 

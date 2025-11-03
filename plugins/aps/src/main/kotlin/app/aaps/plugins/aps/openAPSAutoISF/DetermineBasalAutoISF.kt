@@ -1519,28 +1519,28 @@ class DetermineBasalAutoISF @Inject constructor(
                 }
                 if ((( nowHour  >= 22 ) || ( nowHour <=8 )) && bg < 9.0 * 18 &&
                     Delta <1.0 * 18  && SDelta <1.0* 18 && COB <= 0) {// SemiTwilight and SMB over 0.5
-                    if ( (Steps60M ?: 0) >= 12  && microBolus > LibreTrue * 0.05 * profile.max_iob ) {// SemiTwilight and SMB over 0.5
+                    if ((Steps60M ?: 0) >= 12 && microBolus > LibreTrue * 0.05 * profile.max_iob) {// SemiTwilight and SMB over 0.5
                         microBolus = LibreTrue * 0.05 * profile.max_iob
                         rT.reason.append("nowHour ${nowHour} ")
                         rT.reason.append("(Steps60M ?: 0) ${(Steps60M ?: 0)} ")
                         rT.reason.append("SemiTwilight microBolus =  LibreTrue * 0.05 * profile.max_iob ${microBolus} ")
-                    } else if ( (Steps60M ?: 0) < 12  && microBolus >  LibreTrue * 0.03 * profile.max_iob ) {// Twilight and SMB over 0.4
-                        microBolus =  LibreTrue * 0.03 * profile.max_iob
+                    } else if ((Steps60M ?: 0) < 12 && microBolus > LibreTrue * 0.03 * profile.max_iob) {// Twilight and SMB over 0.4
+                        microBolus = LibreTrue * 0.03 * profile.max_iob
                         rT.reason.append("nowHour ${nowHour} ")
                         rT.reason.append("(Steps60M ?: 0) ${(Steps60M ?: 0)} ")
                         rT.reason.append("Twilight microBolus =  LibreTrue * 0.03 * profile.max_iob ${microBolus} ")
                     }
-                    if ( microBolus + IOB > 1.5 ) {// SemiTwilight and SMB over 0.5
+                    if (microBolus + IOB > 1.5) {// SemiTwilight and SMB over 0.5
                         microBolus = 1.5 - IOB
                         rT.reason.append("microBolus = 1.5 - IOB ; iobThUser ${iobThUser} IOB ${IOB} ")
                         rT.reason.append("microBolus + IOB ov iobThUser microBolus = iobThUser - IOB ${microBolus} ")
                     }
                     rT.reason.append(" CHANGED SIZE SMB? ")
-                else {
+                }else {
                         rT.reason.append(" NOT CHANGED SIZE SMB? ")
                     }
 
-                }
+                //}
                 /*if ( SMBInterval == 60.0 && bg > 7.0 * 18  && LDelta > 0.1 * 18   && bg_acce > 0 &&
                     lastBolusAge > 2 * SMBInterval - 6.0) {
                     //microBolus = microBolus * 1.5

@@ -1532,10 +1532,13 @@ class DetermineBasalAutoISF @Inject constructor(
                     }
                     if ( microBolus + IOB > 1.5 ) {// SemiTwilight and SMB over 0.5
                         microBolus = 1.5 - IOB
-                        rT.reason.append("iobThUser ${iobThUser} IOB ${IOB} ")
+                        rT.reason.append("microBolus = 1.5 - IOB ; iobThUser ${iobThUser} IOB ${IOB} ")
                         rT.reason.append("microBolus + IOB ov iobThUser microBolus = iobThUser - IOB ${microBolus} ")
                     }
                     rT.reason.append(" CHANGED SIZE SMB? ")
+                else {
+                        rT.reason.append(" NOT CHANGED SIZE SMB? ")
+                    }
 
                 }
                 /*if ( SMBInterval == 60.0 && bg > 7.0 * 18  && LDelta > 0.1 * 18   && bg_acce > 0 &&

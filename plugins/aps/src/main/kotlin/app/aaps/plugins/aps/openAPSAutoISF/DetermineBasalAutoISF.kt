@@ -1523,8 +1523,25 @@ class DetermineBasalAutoISF @Inject constructor(
                         Delta <0.9 * 18  && SDelta <0.8* 18 ) {
                         microBolus = microBolus * 0.5
                         rT.reason.append("microBolus = microBolus * 0.5 ; microBolus = ${microBolus}  ")
+                        rT.reason.append(" CHANGED SIZE  for fast rise 0.5 smb? ")
                     }
-                    rT.reason.append(" CHANGED SIZE  for shower time? ")
+                    else if (Delta >=0.9 * 18  && SDelta >=0.8* 18 &&
+                        Delta < 1.2 * 18  && SDelta < 1.1 * 18 ) {
+                        microBolus = microBolus * 0.3
+                        rT.reason.append("microBolus = microBolus * 0.3 ; microBolus = ${microBolus}  ")
+                        rT.reason.append(" CHANGED SIZE  for fast rise 0.3 smb? ")
+                    }
+                    else if (Delta >=1.2 * 18  && SDelta >=1.1* 18  ) {
+                        microBolus = microBolus * 0.15
+                        rT.reason.append("microBolus = microBolus * 0.15 ; microBolus = ${microBolus}  ")
+                        rT.reason.append(" CHANGED SIZE  for fast rise 0.15smb? ")
+                    }
+                }//fast rise bgl > 9.5
+                if (Delta >=0.6 * 18  && SDelta >=0.5* 18 &&
+                    bg > 9.5 * 18  && bg < 11.5 * 18 && IOB > 0.35 * profile.max_iob && COB <= 0) {
+                    microBolus = microBolus * 0.15
+                    rT.reason.append("microBolus = microBolus * 0.15 ; microBolus = ${microBolus}  ")
+                    rT.reason.append(" CHANGED SIZE  for fast rise 0.15smb? ")
                 }
                 // Shower
                 if ((( nowHour  >= 5 ) || ( nowHour <10 )) && bg <= 8.0 * 18 && (Steps60M ?: 0) < 12 && !profile.temptargetSet &&

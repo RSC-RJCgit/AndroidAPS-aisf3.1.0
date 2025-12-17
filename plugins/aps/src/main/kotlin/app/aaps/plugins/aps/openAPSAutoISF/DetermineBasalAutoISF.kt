@@ -1518,7 +1518,7 @@ class DetermineBasalAutoISF @Inject constructor(
                     //rT.reason.append("SemiTwilight microBolus =  LibreTrue * 0.05 * max_iob ${microBolus} ")
                 }// fast rise
                 if (bg > 6.0 * 18 && bg < 9.5 * 18 && iobThUser <71 &&
-                    IOB > 0.22 * profile.max_iob && COB == 0) {
+                    IOB > 0.22 * profile.max_iob && COB <= 0) {
                     if (Delta >=0.7 * 18  && SDelta >=0.6* 18 &&
                         Delta <0.9 * 18  && SDelta <0.8* 18 ) {
                         microBolus = microBolus * 0.5

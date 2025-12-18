@@ -1543,9 +1543,9 @@ class DetermineBasalAutoISF @Inject constructor(
                     rT.reason.append("microBolus = microBolus * 0.15 ; microBolus = ${microBolus}  ")
                     rT.reason.append(" CHANGED SIZE  for fast rise 0.15smb? ")
                 }
-                // Shower
-                else if ((( nowHour  >= 5 ) || ( nowHour <10 )) && bg <= 8.0 * 18 && (Steps60M ?: 0) < 10 && !profile.temptargetSet &&
-                Delta >=0.35 * 18  && SDelta >=0.3* 18 && COB <= 0) {
+                // Shower and no steps times in Twilight am
+                else if ((( nowHour  >= 5 ) || ( nowHour <10 )) && bg <= 8.0 * 18 && (Steps60M ?: 0) < 10 &&
+                    !profile.temptargetSet && Delta >=0.35 * 18  && SDelta >=0.3* 18 && COB <= 0) {
                     if (microBolus + IOB > iobTHvirtualHARD) {
                         microBolus = iobTHvirtualHARD - IOB
                         rT.reason.append("microBolus = iobTHvirtualHARD - IOB ; iobThUser ${iobThUser} IOB ${IOB} ")

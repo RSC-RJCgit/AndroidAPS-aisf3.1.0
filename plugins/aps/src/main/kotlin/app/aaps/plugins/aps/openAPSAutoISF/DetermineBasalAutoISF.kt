@@ -362,7 +362,7 @@ class DetermineBasalAutoISF @Inject constructor(
 
         if (autoIsfMode) {
             consoleError.add("--------------- -------------------")
-            consoleError.add("start AutoISF ${profile.autoISF_version}Nrsn114")
+            consoleError.add("start AutoISF ${profile.autoISF_version}Nrsn115")
             consoleError.add("----------------------------------")
             consoleError.addAll(auto_isf_consoleLog)
             consoleError.addAll(auto_isf_consoleError)
@@ -859,7 +859,7 @@ class DetermineBasalAutoISF @Inject constructor(
         val TwilightTimeDec = TwilightTimeAM + TwilightTimeMins /  100
         //consoleError.add("bg_acce: ${round(bg_acce, 2)} ;")
         rT.reason.append(
-            "Nrsn114 COB: ${round(meal_data.mealCOB, 1).withoutZeros()}, Dev: ${convert_bg(deviation.toDouble())}, BGI: ${convert_bg(bgi)}, ISF: ${convert_bg(sens)}, CR: ${
+            "Nrsn115 COB: ${round(meal_data.mealCOB, 1).withoutZeros()}, Dev: ${convert_bg(deviation.toDouble())}, BGI: ${convert_bg(bgi)}, ISF: ${convert_bg(sens)}, CR: ${
                 round(profile.carb_ratio, 2)
                     .withoutZeros()
             }, Target: ${convert_bg(target_bg)}, minPredBG ${convert_bg(minPredBG)}, minGuardBG ${convert_bg(minGuardBG)}, IOBpredBG ${convert_bg(lastIOBpredBG)}"
@@ -1526,13 +1526,13 @@ class DetermineBasalAutoISF @Inject constructor(
                         rT.reason.append(" CHANGED SIZE  for fast rise 0.5 smb? ")
                     }
                     else */
-                    if (Delta >=0.9 * 18  && SDelta >=0.8* 18 &&
-                        Delta < 1.2 * 18  && SDelta < 1.1 * 18 ) {
+                    if (Delta >=0.75 * 18  && SDelta >=0.75* 18 &&
+                        Delta < 1.0 * 18  && SDelta < 1.0 * 18 ) {
                         microBolus = microBolus * 0.5
                         rT.reason.append("microBolus = microBolus * 0.5 ; microBolus = ${microBolus}  ")
                         rT.reason.append(" CHANGED SIZE  for fast rise 0.5 smb? ")
                     }
-                    else if (Delta >=1.2 * 18  && SDelta >=1.1* 18  ) {
+                    else if (Delta >=1.0 * 18  && SDelta >=1.0* 18  ) {
                         microBolus = microBolus * 0.3
                         rT.reason.append("microBolus = microBolus * 0.3 ; microBolus = ${microBolus}  ")
                         rT.reason.append(" CHANGED SIZE  for fast rise 0.3smb? ")
@@ -1701,7 +1701,7 @@ class DetermineBasalAutoISF @Inject constructor(
 
 org.gradle.jvmargs=-Xmx8192m -Dfile.encoding=UTF-8
         rT.reason.append(
-            "Nrsn114 COB: ${round(meal_data.mealCOB, 1).withoutZeros()}, Dev: ${convert_bg(deviation.toDouble())}, BGI: ${convert_bg(bgi)}, ISF: ${convert_bg(sens)}, CR: ${
+            "Nrsn115 COB: ${round(meal_data.mealCOB, 1).withoutZeros()}, Dev: ${convert_bg(deviation.toDouble())}, BGI: ${convert_bg(bgi)}, ISF: ${convert_bg(sens)}, CR: ${
                 round(profile.carb_ratio, 2)
                     .withoutZeros()
             }, Target: ${convert_bg(target_bg)}, minPredBG ${convert_bg(minPredBG)}, minGuardBG ${convert_bg(minGuardBG)}, IOBpredBG ${convert_bg(lastIOBpredBG)}"
@@ -1755,6 +1755,6 @@ org.gradle.jvmargs=-Xmx8192m -Dfile.encoding=UTF-8
         rT.reason.append("enableButton: ${enableButton} ;")
         rT.reason.append("targetBgOffset: ${convert_bg(targetBgOffset )} ;")
         rT.reason.append("targetBgOrig: ${convert_bg(targetBgOrig )} ;")
-Nrsn114
+Nrsn115
 
 */

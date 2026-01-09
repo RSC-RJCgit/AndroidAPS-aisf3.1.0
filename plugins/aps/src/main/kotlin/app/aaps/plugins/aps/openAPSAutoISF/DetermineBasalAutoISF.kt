@@ -1510,7 +1510,7 @@ class DetermineBasalAutoISF @Inject constructor(
                 consoleError.add("naive_eventualBG ${convert_bg(naive_eventualBG)},${durationReq}m ${smbLowTempReq}U/h temp needed; last bolus ${round(lastBolusAge / 60.0, 1)}m ago; maxBolus: $maxBolus")
                 consoleError.add("offsetSoZeroSMB $offsetSoZeroSMB")
                 var LibreTrue = 1.00
-                if (Delta >=0.25 * 18  && SDelta >=0.25* 18 && profile.temptargetSet && target_bg == 4.0 ) {
+                if (Delta >=0.25 * 18  && SDelta >=0.25* 18 && profile.temptargetSet && target_bg <= 4.1 *18 ) {
                     microBolus = microBolus * 0.5
                     rT.reason.append("Delta ov0.25  && SDeltaov0.25 && profile.temptargetSet && target_bg == 4.0 microBolus = ${microBolus}  ")
                     rT.reason.append(" CHANGED SIZE  for high TT 0.5 smb? ")

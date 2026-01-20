@@ -362,7 +362,7 @@ class DetermineBasalAutoISF @Inject constructor(
 
         if (autoIsfMode) {
             consoleError.add("--------------- -------------------")
-            consoleError.add("start AutoISF ${profile.autoISF_version}Nrsn118")
+            consoleError.add("start AutoISF ${profile.autoISF_version}Nrsn119")
             consoleError.add("----------------------------------")
             consoleError.addAll(auto_isf_consoleLog)
             consoleError.addAll(auto_isf_consoleError)
@@ -859,7 +859,7 @@ class DetermineBasalAutoISF @Inject constructor(
         val TwilightTimeDec = TwilightTimeAM + TwilightTimeMins /  100
         //consoleError.add("bg_acce: ${round(bg_acce, 2)} ;")
         rT.reason.append(
-            "Nrsn118 COB: ${round(meal_data.mealCOB, 1).withoutZeros()}, Dev: ${convert_bg(deviation.toDouble())}, BGI: ${convert_bg(bgi)}, ISF: ${convert_bg(sens)}, CR: ${
+            "Nrsn119 COB: ${round(meal_data.mealCOB, 1).withoutZeros()}, Dev: ${convert_bg(deviation.toDouble())}, BGI: ${convert_bg(bgi)}, ISF: ${convert_bg(sens)}, CR: ${
                 round(profile.carb_ratio, 2)
                     .withoutZeros()
             }, Target: ${convert_bg(target_bg)}, minPredBG ${convert_bg(minPredBG)}, minGuardBG ${convert_bg(minGuardBG)}, IOBpredBG ${convert_bg(lastIOBpredBG)}"
@@ -1510,19 +1510,26 @@ class DetermineBasalAutoISF @Inject constructor(
                 consoleError.add("naive_eventualBG ${convert_bg(naive_eventualBG)},${durationReq}m ${smbLowTempReq}U/h temp needed; last bolus ${round(lastBolusAge / 60.0, 1)}m ago; maxBolus: $maxBolus")
                 consoleError.add("offsetSoZeroSMB $offsetSoZeroSMB")
                 var LibreTrue = 1.00
-                if (Delta >=0.25 * 18  && SDelta >=0.25* 18 && profile.temptargetSet && target_bg <= 4.1 *18 ) {
+                if (Delta >=0.25 * 18  && SDelta >=0.25* 18 && profile.temptargetSet && target_bg <= 4.1 *18 ) {// Jigh Over6.0
                     microBolus = microBolus * 0.5
                     rT.reason.append("Delta ov0.25  && SDeltaov0.25 && profile.temptargetSet && target_bg == 4.0 microBolus = ${microBolus}  ")
                     rT.reason.append(" CHANGED SIZE  for high TT 0.5 smb? ")
                 }
                 //var LibreTrue = 0.33
-                else if ( Delta > 1.8 && LDelta < - 0.05*18 && bg < 162 ) {// SemiTwilight and SMB over 0.5
+                else if ( Delta > 1.8 && LDelta < - 0.05*18 && bg < 162 ) {// glitch?
                     microBolus = 0.0
                     //rT.reason.append("nowHour ${nowHour} ")
                     //rT.reason.append("(Steps60M ?: 0) ${(Steps60M ?: 0)} ")
                     //rT.reason.append("SemiTwilight microBolus =  LibreTrue * 0.05 * max_iob ${microBolus} ")
                 }// fast rise1
-                else if (bg > 6.0 * 18 && bg < 11.5 * 18 && iobThUser <71 && 
+
+                if (Delta >=0.60 * 18  && SDelta >=0.60* 18 && nowHour >9 && (Steps60M ?: 0) >= 10 &&
+                    COB <= 5  ) {// any Do.6 day
+                    microBolus = microBolus * 0.75
+                    rT.reason.append("microBolus = microBolus * 0.5 ; microBolus = ${microBolus}  ")
+                    rT.reason.append(" CHANGED SIZE  for fast rise 0.5 smb? ")
+                }
+                else if (bg > 6.0 * 18 && bg < 11.5 * 18 && iobThUser <71 &&
                     IOB > 0.22 * profile.max_iob && COB <= 0 && (Steps60M ?: 0) >= 10 ) {
                     if (Delta >=0.75 * 18  && SDelta >=0.75* 18 &&
                         Delta < 1.0 * 18  && SDelta < 1.0 * 18 ) {
@@ -1530,7 +1537,7 @@ class DetermineBasalAutoISF @Inject constructor(
                         rT.reason.append("microBolus = microBolus * 0.5 ; microBolus = ${microBolus}  ")
                         rT.reason.append(" CHANGED SIZE  for fast rise 0.5 smb? ")
                     }
-                    if (Delta >=0.5 * 18  && SDelta >=0.5* 18 && IOB > 0.35 * profile.max_iob &&
+                    else if (Delta >=0.5 * 18  && SDelta >=0.5* 18 && IOB > 0.35 * profile.max_iob &&
                         Delta < 0.75 * 18  && SDelta < 0.75 * 18  && bg > 9.5 * 18 && bg < 12.5 * 18) {
                         microBolus = microBolus * 0.6
                         rT.reason.append("microBolus = microBolus * 0.5 ; microBolus = ${microBolus}  ")
@@ -1558,6 +1565,12 @@ class DetermineBasalAutoISF @Inject constructor(
                         rT.reason.append("microBolus + IOB ov iobTHvirtualHARDshower microBolus = iobTHvirtualHARDshower - IOB ${microBolus} ")
                     }
                     rT.reason.append(" CHANGED SIZE  for shower time? ")
+                }
+                else if (Delta >=0.3 * 18  && SDelta >=0.30* 18 && nowHour < 9 &&
+                    (Steps60M ?: 0) == 0  && iobThUser <30) {// any time less than8
+                    microBolus = microBolus * 0.5
+                    rT.reason.append("microBolus = microBolus * 0.5 ; microBolus = ${microBolus}  ")
+                    rT.reason.append(" CHANGED SIZE  for fast rise 0.5 smb? ")
                 }
                 else if ((( nowHour  >= 6 ) && ( nowHour <= 8 )) && bg < 9.0 * 18 &&
                     Delta <1.0 * 18  && SDelta <1.0* 18 && COB <= 0 && (Steps60M ?: 0) < 10 ) {
@@ -1705,7 +1718,7 @@ class DetermineBasalAutoISF @Inject constructor(
 
 org.gradle.jvmargs=-Xmx8192m -Dfile.encoding=UTF-8
         rT.reason.append(
-            "Nrsn118 COB: ${round(meal_data.mealCOB, 1).withoutZeros()}, Dev: ${convert_bg(deviation.toDouble())}, BGI: ${convert_bg(bgi)}, ISF: ${convert_bg(sens)}, CR: ${
+            "Nrsn119 COB: ${round(meal_data.mealCOB, 1).withoutZeros()}, Dev: ${convert_bg(deviation.toDouble())}, BGI: ${convert_bg(bgi)}, ISF: ${convert_bg(sens)}, CR: ${
                 round(profile.carb_ratio, 2)
                     .withoutZeros()
             }, Target: ${convert_bg(target_bg)}, minPredBG ${convert_bg(minPredBG)}, minGuardBG ${convert_bg(minGuardBG)}, IOBpredBG ${convert_bg(lastIOBpredBG)}"
@@ -1759,6 +1772,6 @@ org.gradle.jvmargs=-Xmx8192m -Dfile.encoding=UTF-8
         rT.reason.append("enableButton: ${enableButton} ;")
         rT.reason.append("targetBgOffset: ${convert_bg(targetBgOffset )} ;")
         rT.reason.append("targetBgOrig: ${convert_bg(targetBgOrig )} ;")
-Nrsn118
+Nrsn119
 
 */

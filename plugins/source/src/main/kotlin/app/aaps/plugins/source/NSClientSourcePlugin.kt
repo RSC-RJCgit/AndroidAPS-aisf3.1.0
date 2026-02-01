@@ -46,7 +46,8 @@ class NSClientSourcePlugin @Inject constructor(
                 SourceSensor.DEXCOM_G5_NATIVE_XDRIP,
                 SourceSensor.DEXCOM_G6_NATIVE_XDRIP,
                 SourceSensor.DEXCOM_G7_NATIVE_XDRIP,
-            ).any { it == glucoseValue.sourceSensor }
+                SourceSensor.LIBRE_2_NATIVE,
+            ).any { it == glucoseValue.sourceSensor } // Libre2 Native
             lastBGTimeStamp = glucoseValue.timestamp
         }
     }

@@ -54,7 +54,14 @@ class GlucoseStatusProviderImpl @Inject constructor(
         val fslValue = fsl.raw
         val fslRaw = fsl.noise
         val fslSmooth = fsl.value
-        val fslReally = cgm.text=="Libre2" || cgm.text=="Libre2 Native" || cgm.text=="Libre3"   // || cgm.text=="G7"
+        // val fslReally = cgm.text=="Libre2" || cgm.text=="Libre2 Native" || cgm.text=="Libre3"   // || cgm.text=="G7"
+        val fslReally =
+            cgm.text == "Libre2" ||
+                cgm.text == "Libre2 Native" ||
+                cgm.text == "Libre3" ||
+                cgm.text.contains("Libre", ignoreCase = true) ||
+                cgm.text.contains("Juggluco", ignoreCase = true)
+// || cgm.text == "G7"
         var fslMinDur = 15
         var change: Double
         if (sizeRecords == 1) {

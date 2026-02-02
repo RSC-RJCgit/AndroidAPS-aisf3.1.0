@@ -1782,15 +1782,23 @@ org.gradle.jvmargs=-Xmx8192m -Dfile.encoding=UTF-8
         rT.reason.append("enableButton: ${enableButton} ;")
         rT.reason.append("targetBgOffset: ${convert_bg(targetBgOffset )} ;")
         rT.reason.append("targetBgOrig: ${convert_bg(targetBgOrig )} ;")
-        glucosstatusproviderimpl.kt
+glucosstatusproviderimpl.kt
+import app.aaps.core.keys.BooleanKey
+        val libreSensor =
+            cgm.text == "Libre2" ||
+                cgm.text == "Libre2 Native" ||
+                cgm.text == "Libre3" ||
+                cgm.text.contains("Libre", ignoreCase = true ||
+                    cgm.text.contains("Juggluco", ignoreCase = true))
 
+        // val libreSpecialEnabled = preferences.get(BooleanKey.FslCalibrationTrigger)
+        val libreSpecialEnabled = preferences.get(BooleanKey.FslUseSpecialSettings)
         val fslReally =
-    cgm.text == "Libre2" ||
-    cgm.text == "Libre2 Native" ||
-    cgm.text == "Libre3" ||
-    cgm.text.contains("Libre", ignoreCase = true) ||
-    cgm.text.contains("Juggluco", ignoreCase = true)
-// || cgm.text == "G7"
+            libreSensor || (libreSpecialEnabled && cgm.text.contains("Juggluco", ignoreCase = true))
+
+boolean.kt
+    FslCalibrationEnd("calibration_end", false, defaultedBySM = true),
+    FslUseSpecialSettings("fsl_use_special_settings", false, defaultedBySM = true),
  Nrsn126
 
 */

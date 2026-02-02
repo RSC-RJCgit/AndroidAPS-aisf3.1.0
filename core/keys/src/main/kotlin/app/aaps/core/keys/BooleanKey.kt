@@ -65,7 +65,6 @@ enum class BooleanKey(
     ApsAutoIsfSmbOnEvenTarget("Enable alternative activation of SMB always", false, defaultedBySM = true),   // profile target
     FslCalibrationTrigger("calibration_stops_SMB", false, defaultedBySM = true),
     FslCalibrationEnd("calibration_end", false, defaultedBySM = true),
-    FslCalibrationEnd("calibration_end", false, defaultedBySM = true),
     FslUseSpecialSettings("fsl_use_special_settings", false, defaultedBySM = true),
 
 

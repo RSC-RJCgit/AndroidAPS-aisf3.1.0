@@ -1267,7 +1267,7 @@ addPreference(preferenceManager.createPreferenceScreen(context).apply {
             }
         }
     }
-}
+///}
 
 /*
 AutoISFpluginNrsn127

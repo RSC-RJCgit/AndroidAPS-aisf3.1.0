@@ -59,17 +59,28 @@ class GlucoseStatusProviderImpl @Inject constructor(
         val fslRaw = fsl.noise
         val fslSmooth = fsl.value
 
-        val libreSensor =
+        /* val libreSensor =
             cgm.text == "Libre2" ||
                 cgm.text == "Libre2 Native" ||
                 cgm.text == "Libre3" ||
                 cgm.text.contains("Libre", ignoreCase = true ||
-                    cgm.text.contains("Juggluco", ignoreCase = true))
+                    cgm.text.contains("Juggluco", ignoreCase = true)) */
 
-        // val libreSpecialEnabled = preferences.get(BooleanKey.FslCalibrationTrigger)
-        val libreSpecialEnabled = preferences.get(BooleanKey.FslUseSpecialSettings)
-        val fslReally =
-            libreSensor || (libreSpecialEnabled && cgm.text.contains("Juggluco", ignoreCase = true))
+        //  addPreference(preferenceManager.createPreferenceScreen(context).apply {
+        //     key = "auto_isf_settings"
+        //     title = rh.gs(R.string.autoISF_settings_title)
+        //     ...
+        // })
+
+        val libreSensor =
+            cgm.text.contains("Libre", ignoreCase = true)
+
+        val jugglucoSpecial =
+            preferences.get(BooleanKey.FslUseSpecialSettings) &&
+                cgm.text.contains("Juggluco", ignoreCase = true)
+
+        val fslReally = libreSensor || jugglucoSpecial
+
 
         /* val fslReally = cgm.text=="Libre2" || cgm.text=="Libre2 Native" || cgm.text=="Libre3" ||
             (cgm.text.contains("Libre", ignoreCase = true) ||

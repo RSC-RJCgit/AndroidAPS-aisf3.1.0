@@ -1208,14 +1208,34 @@ open class OpenAPSAutoISFPlugin @Inject constructor(
                 addPreference(AdaptiveIntPreference(ctx = context, intKey = IntKey.ActivityMonitorIdleEnd, summary = R.string.inactivity_idle_end_summary, title = R.string.inactivity_idle_end_title ))
                 addPreference(AdaptiveSwitchPreference(ctx = context, booleanKey = BooleanKey.ActivityMonitorShowStepsFromSmartphone, summary = R.string.steps_graph_from_smartphone_summary, title = R.string.steps_graph_from_smartphone_title))
             })
+/*
+
+addPreference(preferenceManager.createPreferenceScreen(context).apply {
+    key = "Libre_special_settings"
+    title = "Libre special settings"
+    summary = "Calibrate and smooth Juggluco raw data"
+
+    addPreference(AdaptiveSwitchPreference(
+        ctx = context,
+        booleanKey = BooleanKey.FslUseSpecialSettings,
+        title = R.string.fsl_use_special_settings_title,
+        summary = R.string.fsl_use_special_settings_summary
+    ))
+ */
+
             addPreference(preferenceManager.createPreferenceScreen(context).apply {
-                key = "auto_isf_settings"
-                title = rh.gs(R.string.autoISF_settings_title)
-                summary = rh.gs(R.string.autoISF_settings_summary)
-                addPreference(preferenceManager.createPreferenceScreen(context).apply {
-                    key = "Libre_special_settings"
-                    title = "Libre special settings"  //rh.gs(R.string.smb_delivery_settings_title)
-                    summary = "Calibrate and smooth Juggluco raw data"  //rh.gs(R.string.smb_delivery_settings_summary)
+                key = "Libre_special_settings"
+                title = "Libre special settings"
+                summary = "Calibrate and smooth Juggluco raw data"
+
+                addPreference(
+                    AdaptiveSwitchPreference(
+                        ctx = context,
+                        booleanKey = BooleanKey.FslUseSpecialSettings,
+                        title = R.string.fsl_use_special_settings_title,
+                        summary = R.string.fsl_use_special_settings_summary
+                    )
+                )
                     addPreference(AdaptiveSwitchPreference(ctx = context, booleanKey = BooleanKey.FslCalibrationTrigger, summary = R.string.calibration_stops_smb_summary, title = R.string.calibration_stops_smb_title))
                     addPreference(AdaptiveSwitchPreference(ctx = context, booleanKey = BooleanKey.FslCalibrationEnd, summary = R.string.calibration_enable_smb_summary, title = R.string.calibration_enable_smb_title))
                     addPreference(AdaptiveDoublePreference(ctx = context, doubleKey = DoubleKey.FslCalOffset, dialogMessage = R.string.fslCal_Offset_summary, title = R.string.fslCal_Offset_title))
@@ -1250,6 +1270,6 @@ open class OpenAPSAutoISFPlugin @Inject constructor(
 }
 
 /*
-AutoISFpluginNrsn126
+AutoISFpluginNrsn127
 
 */

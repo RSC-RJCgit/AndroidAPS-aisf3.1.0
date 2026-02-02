@@ -261,6 +261,9 @@
     <string name="fsl_exp1_factor_title">Libre 1st order exponential smoothing factor</string>
     <string name="fsl_exp1_factor_summary">Used without xDrip 1 minute smoothing in between\n0.0 : max. effect\n1.0 : min. effect</string>
     <string name="key_fsl_exp1_correction" translatable="false">fslExp1SmoothCorrection</string>
+    <string name="fsl_use_special_settings_title">Use Juggluco Libre special slope</string>
+    <string name="fsl_use_special_settings_summary">Treat 1-minute Nightscout BG from Juggluco as Libre minute stream for slope/parabola</string>
+
     <!--
     <string name="fsl_exp1_correction_title">Libre 1st order exponential smoothing correction</string>
     <string name="fsl_exp1_correction_summary">Used without xDrip 1 minute smoothing in between; takes back part of the factor effect\n0.0 : min. effect\n1.0 : max. effect</string>

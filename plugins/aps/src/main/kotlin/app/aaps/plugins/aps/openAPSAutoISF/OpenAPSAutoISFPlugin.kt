@@ -693,9 +693,12 @@ open class OpenAPSAutoISFPlugin @Inject constructor(
             val resolvedDigits = if (value > 20) 1 else 2
             return String.format("%.${resolvedDigits}f", round(value / 18, resolvedDigits))
         }*/
+        var steps180min = StepService.getRecentStepCount180Min()
 
         val nowHour = LocalDateTime.now().hour
         consoleError.add("steps60min is ${recentSteps60Minutes} ;;")
+        consoleError.add("steps180min is ${steps180min} ;;")
+
         consoleError.add("nowHour is ${nowHour} ;;")
         val sens = profile.getProfileIsfMgdl()
         val glucose_status = glucoseStatusProvider.glucoseStatusData

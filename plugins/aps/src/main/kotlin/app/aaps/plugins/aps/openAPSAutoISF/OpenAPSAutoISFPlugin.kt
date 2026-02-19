@@ -786,6 +786,7 @@ open class OpenAPSAutoISFPlugin @Inject constructor(
         val fit_corr: Double = glucose_status.corrSqu
         var bg_acce: Double = glucose_status.bgAcceleration
         //val nowHour = LocalDateTime.now().hour
+
         consoleError.add("steps60min is ${recentSteps60Minutes} ;;")
         //consoleError.add("steps180min is ${steps180min} ;;")
         consoleError.add("nowHour is ${nowHour} ;;")
@@ -1250,6 +1251,6 @@ open class OpenAPSAutoISFPlugin @Inject constructor(
 }
 
 /*
-AutoISFpluginNrsn125
+AutoISFpluginNrsn130
 
 */

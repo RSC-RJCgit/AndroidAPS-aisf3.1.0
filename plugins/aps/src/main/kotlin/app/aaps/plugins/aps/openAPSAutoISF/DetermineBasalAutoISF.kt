@@ -14,6 +14,7 @@ import app.aaps.core.interfaces.profile.ProfileUtil
 import app.aaps.core.keys.BooleanKey
 import app.aaps.core.keys.DoubleKey
 import app.aaps.core.keys.interfaces.Preferences
+import app.aaps.plugins.aps.openAPSSMB.StepService
 import java.text.DecimalFormat
 import java.time.Instant
 import java.time.ZoneId
@@ -143,7 +144,7 @@ class DetermineBasalAutoISF @Inject constructor(
 
     fun setTempBasal(_rate: Double, duration: Int, profile: OapsProfileAutoIsf, rT: RT, currenttemp: CurrentTemp): RT {
         //var maxSafeBasal = Math.min(profile.max_basal, 3 * profile.max_daily_basal, 4 * profile.current_basal);
-
+        var steps180min = StepService.getRecentStepCount180Min()
         val maxSafeBasal = getMaxSafeBasal(profile)
         var rate = _rate
         if (rate < 0) rate = 0.0
@@ -362,7 +363,7 @@ class DetermineBasalAutoISF @Inject constructor(
 
         if (autoIsfMode) {
             consoleError.add("--------------- -------------------")
-            consoleError.add("start AutoISF ${profile.autoISF_version} Nrsn125")
+            consoleError.add("start AutoISF ${profile.autoISF_version} Nrsn130")
             consoleError.add("----------------------------------")
             consoleError.addAll(auto_isf_consoleLog)
             consoleError.addAll(auto_isf_consoleError)
@@ -840,7 +841,8 @@ class DetermineBasalAutoISF @Inject constructor(
         val Steps15M = profile.recent_steps_15_minutes
         val Steps30M = profile.recent_steps_30_minutes
         val Steps60M = profile.recent_steps_60_minutes
-        //val Steps180M = profile.recent_steps_180_minutes
+
+        var steps180min = StepService.getRecentStepCount180Min()
 
         // Compute delta_accl using the same formula as the original JS
         val delta_accl: Double = if (abs(SDelta) == 0.0) {
@@ -859,7 +861,7 @@ class DetermineBasalAutoISF @Inject constructor(
         val TwilightTimeDec = TwilightTimeAM + TwilightTimeMins /  100
         //consoleError.add("bg_acce: ${round(bg_acce, 2)} ;")
         rT.reason.append(
-            " Nrsn125 COB: ${round(meal_data.mealCOB, 1).withoutZeros()}, Dev: ${convert_bg(deviation.toDouble())}, BGI: ${convert_bg(bgi)}, ISF: ${convert_bg(sens)}, CR: ${
+            " Nrsn130 COB: ${round(meal_data.mealCOB, 1).withoutZeros()}, Dev: ${convert_bg(deviation.toDouble())}, BGI: ${convert_bg(bgi)}, ISF: ${convert_bg(sens)}, CR: ${
                 round(profile.carb_ratio, 2)
                     .withoutZeros()
             }, Target: ${convert_bg(target_bg)}, minPredBG ${convert_bg(minPredBG)}, minGuardBG ${convert_bg(minGuardBG)}, IOBpredBG ${convert_bg(lastIOBpredBG)}"
@@ -912,6 +914,7 @@ class DetermineBasalAutoISF @Inject constructor(
         consoleError.add("bg_acce: ${round(bg_acce, 2)} ;")
         consoleError.add("profile_percentage: ${profile_percentage} ;")
         rT.reason.append("Steps60M: ${Steps60M} ;")
+        rT.reason.append("Steps180M: ${steps180min} ;")
         rT.reason.append("Steps30M: ${Steps30M} ;")
         rT.reason.append("TwilightTimeDec: ${TwilightTimeDec} ;")
         rT.reason.append("profile_percentage: ${profile_percentage} ;")
@@ -1728,7 +1731,7 @@ class DetermineBasalAutoISF @Inject constructor(
 
 org.gradle.jvmargs=-Xmx8192m -Dfile.encoding=UTF-8
         rT.reason.append(
-            " Nrsn125 COB: ${round(meal_data.mealCOB, 1).withoutZeros()}, Dev: ${convert_bg(deviation.toDouble())}, BGI: ${convert_bg(bgi)}, ISF: ${convert_bg(sens)}, CR: ${
+            " Nrsn130 COB: ${round(meal_data.mealCOB, 1).withoutZeros()}, Dev: ${convert_bg(deviation.toDouble())}, BGI: ${convert_bg(bgi)}, ISF: ${convert_bg(sens)}, CR: ${
                 round(profile.carb_ratio, 2)
                     .withoutZeros()
             }, Target: ${convert_bg(target_bg)}, minPredBG ${convert_bg(minPredBG)}, minGuardBG ${convert_bg(minGuardBG)}, IOBpredBG ${convert_bg(lastIOBpredBG)}"
@@ -1791,6 +1794,6 @@ org.gradle.jvmargs=-Xmx8192m -Dfile.encoding=UTF-8
     cgm.text.contains("Libre", ignoreCase = true) ||
     cgm.text.contains("Juggluco", ignoreCase = true)
 // || cgm.text == "G7"
- Nrsn125
+ Nrsn130
 
 */

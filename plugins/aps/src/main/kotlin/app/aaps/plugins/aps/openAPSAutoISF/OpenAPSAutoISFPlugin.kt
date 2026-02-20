@@ -688,7 +688,7 @@ open class OpenAPSAutoISFPlugin @Inject constructor(
         return activityRatio
     }
 
-    fun autoISF(currentTime: Long, profile: Profile): Double {
+    fun autoISF (currentTime: Long, profile: Profile): Double {
         /*fun convert_bg(value: Double): String {
             val resolvedDigits = if (value > 20) 1 else 2
             return String.format("%.${resolvedDigits}f", round(value / 18, resolvedDigits))
